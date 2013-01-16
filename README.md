@@ -16,6 +16,8 @@ In this sample you will find
 What's next? 
 =============
  - Fork this repository
+ - Define `$TeamCityDistribution$` IDEA path variable with path to TeamCity home (unpacked `.tar.gz` or installed `.exe` distribution).
+ - Add tomcat application server named `Tomcat 7` into IDEA settings from TeamCity distribution path
  - Change project name in IDEA
  - Update `teamcity-server-plugin.xml` to put plugin name, plugin display name and description
  - Rename `server/src/META-INF/build-server-plugin-PLUGIN_NAME.xml` to put your plugin name here and update `server/server.iml`
