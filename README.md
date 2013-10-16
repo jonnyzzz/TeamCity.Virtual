@@ -24,6 +24,7 @@ What's next?
  - Rename `agent/src/META-INF/build-server-agent-PLUGIN_NAME.xml` to put your plugin name here and update `agent/agent.iml`
  - Update plugin .jar file name in `plugin` and `common-jar` artifacts
  - Update plugin .zip file name in `plugin-zip` artifact
+ - Update test suite and tests with your plugin name
  - Have fun!
 
 
