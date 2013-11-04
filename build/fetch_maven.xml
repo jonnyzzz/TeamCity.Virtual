@@ -11,6 +11,12 @@
         <url url="http://repo1.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar" />
      </get>
 
+     <echoxml file="${_maven_dependencies_config}">
+      <settings>
+        <localRepository>${_maven_dependencies_cache}</localRepository>
+      </settings>
+    </echoxml>
+
     <!-- include maven tasks -->
      <taskdef name="dependencies" classname="org.apache.maven.artifact.ant.DependenciesTask">
        <classpath>
@@ -28,7 +34,8 @@
       <fail unless="_maven_init_complete" message="call maven_init target before"/>
 
       <dependencies filesetid="maven.@{dest}.jar.fileset"
-                    sourcesFilesetId="maven.@{dest}.src.fileset">
+                    sourcesFilesetId="maven.@{dest}.src.fileset"
+                    settingsfile="${_maven_dependencies_config}">
         <dependencySpecsElement />
       </dependencies>
 

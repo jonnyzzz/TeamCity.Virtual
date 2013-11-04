@@ -4,6 +4,7 @@
   <property name="home" location="${basedir}/.." />
   <property name="libsDir" location="${home}/lib.fetched" />
   <property name="_maven_dependencies_cache" location="${home}/build/.m2" />
+  <property name="_maven_dependencies_config" location="${_maven_dependencies_cache}/.m2.config.xml" />
 
   <tstamp>
     <format property="snapshot" pattern="yyyyMMddHHmmss"/>
