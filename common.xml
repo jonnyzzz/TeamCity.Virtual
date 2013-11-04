@@ -1,0 +1,39 @@
+<project name="common" default="nop" basedir=".">
+  <target name="nop"/>
+
+  <property name="home" location="${basedir}/.." />
+  <property name="libsDir" location="${home}/lib.fetched" />
+  <property name="_maven_dependencies_cache" location="${home}/build/.m2" />
+
+  <tstamp>
+    <format property="snapshot" pattern="yyyyMMddHHmmss"/>
+  </tstamp>
+
+  <property name="build.number" value="SNAPSHOT_${snapshot}"/>
+
+  <macrodef name="recreate-dir">
+    <attribute name="dir" />
+    <sequential>
+       <delete dir="@{dir}" failonerror="false" />
+       <mkdir dir="@{dir}"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="shell-exec">
+    <attribute name="dir" />
+    <element name="argz" implicit="true" />
+    <sequential>
+       <exec executable="cmd" dir="@{dir}" osfamily="windows">
+          <arg value="/c"/>
+          <argz />
+       </exec>
+
+       <!-- may not work under unix, needs to be tested -->
+       <exec executable="/bin/sh" dir="@{dir}" osfamily="unix">
+          <arg value="-c"/>
+          <argz />
+       </exec>
+    </sequential>
+  </macrodef>    
+
+</project>
