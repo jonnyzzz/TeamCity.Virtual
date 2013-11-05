@@ -55,7 +55,7 @@ ${src-text}
      <condition property="eofmode" value="crlf" else="lf">
        <os family="windows" />
      </condition>
-     <fixcrlf file="${lib.xml}" eol="${eofmode}"/>
+     <fixcrlf file="${lib.xml}" eol="${eofmode}" eof="remove" fixlast="false"/>
 
      <delete file="${lib.xml}.jonnyzzz"/>
   </target>
