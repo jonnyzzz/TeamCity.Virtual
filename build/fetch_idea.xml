@@ -65,7 +65,7 @@ ${src-text}
     <attribute name="property" />
     <sequential>
       <pathconvert property="@{property}-temp" refid="@{refid}" setonempty="true" dirsep="/" pathsep="${line.separator}">
-        <map from="${jonnyzzz.idea.project.root}" to="$$PROJECT_DIR$$"/>
+        <map from="${jonnyzzz.idea.project.root}" to="jar://$$PROJECT_DIR$$"/>
       </pathconvert>
                               
       <loadresource property="@{property}">
