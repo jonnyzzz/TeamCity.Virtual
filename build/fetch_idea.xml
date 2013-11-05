@@ -1,0 +1,97 @@
+<project name="common" default="nop" basedir=".">
+  <import file="common.xml" />
+
+  <!-- this task is called from the macrodef below. 
+       it is not assumed to be called from the script explicitly
+   
+       assumes 
+          jonnyzzz.idea.library.name - name of library to generate
+          jonnyzzz.idea.library.root - library home directory
+          jonnyzzz.idea.library.srcRoot - library sources home directory
+          jonnyzzz.idea.project.root - directory where .idea folder is
+
+  -->  
+  <target name="__generate_idea_library_file">
+     <property name="libs" value="${jonnyzzz.idea.project.root}/.idea/libraries" />
+
+      <loadresource property="lib-file-name">
+        <propertyresource name="jonnyzzz.idea.library.name" />
+        <filterchain>
+          <tokenfilter>
+             <replaceregex pattern="[^a-zA-Z\s]" replace="_" flags="gi"/>
+           </tokenfilter>
+        </filterchain>
+      </loadresource>
+
+     <property name="lib.xml" value="${libs}/${lib-file-name}.xml" />
+ 
+     <!-- backup things ... once someone does not have VCS for it -->
+     <copy file="${lib.xml}" tofile="${lib.xml}.jonnyzzz" overwrite="true" failonerror="false" />
+
+     <fileset id="jar" dir="${jonnyzzz.idea.library.root}" includes="*.jar" />
+     <fileset id="src" dir="${jonnyzzz.idea.library.srcRoot}" >
+       <include name="*.jar" />
+       <include name="*.zip" />   
+     </fileset>
+ 
+     <__filest_to_xml property="jar-text" refid="jar" />
+     <__filest_to_xml property="src-text" refid="src" />
+
+     <echo>${jar-text}</echo>
+     <echo>${src-text}</echo>
+
+     <echo file="${lib.xml}"><![CDATA[<component name="libraryTable">
+  <library name="${jonnyzzz.idea.library.name}">
+    <CLASSES>
+${jar-text}
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+${src-text}
+    </SOURCES>
+  </library>
+</component>]]></echo>
+
+     <replaceregexp byline="false">
+       <fileset file="${lib.xml}"/>
+
+       <regexp pattern="[\r\n]+"/>
+       <substitution expression="${line.separator}"/>
+     </replaceregexp>
+
+     <delete file="${lib.xml}.jonnyzzz"/>
+  </target>
+
+  <macrodef name="__filest_to_xml">
+    <attribute name="refid" />
+    <attribute name="property" />
+    <sequential>
+      <pathconvert property="@{property}-temp" refid="@{refid}" setonempty="true" dirsep="/" pathsep="${line.separator}">
+        <map from="${jonnyzzz.idea.project.root}" to="$$PROJECT_DIR$$"/>
+      </pathconvert>
+                              
+      <loadresource property="@{property}">
+        <propertyresource name="@{property}-temp" />
+        <filterchain>
+            <trim/>
+            <prefixlines prefix="      &lt;root url=&quot;"/>
+            <suffixlines suffix="!/&quot; /&gt;" /> 
+        </filterchain>
+      </loadresource>
+    </sequential>
+  </macrodef>
+
+
+  <macrodef name="update_idea_lib">
+    <attribute name="dest" />
+    <sequential>
+       <ant dir="${basedir}" antfile="fetch_idea.xml" target="__generate_idea_library_file">
+         <property name="jonnyzzz.idea.library.name" value="@{dest}" />
+         <property name="jonnyzzz.idea.library.root" location="${libsDir}/@{dest}" /> 
+         <property name="jonnyzzz.idea.library.srcRoot" location="${libsDir}/@{dest}/src" />
+         <property name="jonnyzzz.idea.project.root" location="${idea-project-home}" />
+       </ant>
+    </sequential>
+  </macrodef>
+
+</project>

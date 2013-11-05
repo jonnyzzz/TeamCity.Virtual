@@ -1,8 +1,16 @@
 <project name="common" default="nop" basedir=".">
   <target name="nop"/>
 
+  <!-- computed project root. We assume scripts are in `build` folder under the root -->
   <property name="home" location="${basedir}/.." />
+
+  <!-- the folder to store fetched libraries -->
   <property name="libsDir" location="${home}/lib.fetched" />
+
+  <!-- the folder where `.idea` folder is -->
+  <property name="idea-project-home" location="${home}" />
+
+  <!-- some Maven related settings section -->
   <property name="_maven_dependencies_cache" location="${home}/build/.m2" />
   <property name="_maven_dependencies_config" location="${_maven_dependencies_cache}/.m2.config.xml" />
 

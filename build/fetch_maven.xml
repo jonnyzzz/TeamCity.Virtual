@@ -1,5 +1,6 @@
 <project name="maven_helpers" basedir="." default="nop">
-  <import file="common.xml" />
+  <import file="common.xml" /> 
+  <import file="fetch_idea.xml" />
 
   <target name="maven_init" unless="_maven_init_complete">
      <property name="_maven_init_complete" value="true" />
@@ -46,6 +47,8 @@
       <copy todir="${libsDir}/@{dest}/src" flatten="true">
         <fileset refid="maven.@{dest}.src.fileset" />
       </copy>
+
+      <update_idea_lib dest="@{dest}" />
     </sequential>
   </macrodef>
 
