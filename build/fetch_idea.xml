@@ -52,12 +52,10 @@ ${src-text}
   </library>
 </component>]]></echo>
 
-     <replaceregexp byline="false">
-       <fileset file="${lib.xml}"/>
-
-       <regexp pattern="[\r\n]+"/>
-       <substitution expression="${line.separator}"/>
-     </replaceregexp>
+     <condition property="eofmode" value="crlf" else="lf">
+       <os family="windows" />
+     </condition>
+     <fixcrlf file="${lib.xml}" eol="${eofmode}"/>
 
      <delete file="${lib.xml}.jonnyzzz"/>
   </target>
