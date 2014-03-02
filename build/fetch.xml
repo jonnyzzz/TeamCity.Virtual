@@ -1,0 +1,26 @@
+<!--
+
+
+   This is example script. Patch it for your project
+
+
+-->
+<project basedir=".">
+ 
+  <import file="common.xml" />
+  <import file="fetch_maven.xml" />
+
+  <target name="fetch" depends="maven_init">
+     <!-- this is sample on how to get dependency fetched -->
+     <!-- the script is wrapper under maven ant tasks -->
+
+     <maven_fetch dest="intellij-annotations">
+        <dependency groupId="com.intellij" artifactId="annotations" version="12.0" />
+     </maven_fetch>
+
+     <maven_fetch dest="testng">
+        <dependency groupId="org.testng" artifactId="testng" version="6.8.7" />
+     </maven_fetch>
+  </target>   
+
+</project>

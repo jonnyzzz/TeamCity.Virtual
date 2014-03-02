@@ -1,0 +1,55 @@
+<project name="maven_helpers" basedir="." default="nop">
+  <import file="common.xml" /> 
+  <import file="fetch_idea.xml" />
+
+  <target name="maven_init" unless="_maven_init_complete">
+     <property name="_maven_init_complete" value="true" />
+
+     <delete dir="${_maven_dependencies_cache}/ant" failonerror="false" />
+     <mkdir dir="${_maven_dependencies_cache}/ant" />
+
+     <get dest="${_maven_dependencies_cache}/ant">
+        <url url="http://repo1.maven.org/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar" />
+     </get>
+
+     <echoxml file="${_maven_dependencies_config}">
+      <settings>
+        <localRepository>${_maven_dependencies_cache}</localRepository>
+      </settings>
+    </echoxml>
+
+    <!-- include maven tasks -->
+     <taskdef name="dependencies" classname="org.apache.maven.artifact.ant.DependenciesTask">
+       <classpath>
+         <fileset dir="${_maven_dependencies_cache}/ant" includes="*.jar" />
+       </classpath>
+     </taskdef>
+  </target>
+
+
+  <macrodef name="maven_fetch">
+    <attribute name="dest" />
+    <element name="dependencySpecsElement" implicit="true"/>
+
+    <sequential>
+      <fail unless="_maven_init_complete" message="call maven_init target before"/>
+
+      <dependencies filesetid="maven.@{dest}.jar.fileset"
+                    sourcesFilesetId="maven.@{dest}.src.fileset"
+                    settingsfile="${_maven_dependencies_config}">
+        <dependencySpecsElement />
+      </dependencies>
+
+      <delete dir="${libsDir}/@{dest}" failonerror="false" />
+      <copy todir="${libsDir}/@{dest}" flatten="true">
+        <fileset refid="maven.@{dest}.jar.fileset" />
+      </copy>
+      <copy todir="${libsDir}/@{dest}/src" flatten="true">
+        <fileset refid="maven.@{dest}.src.fileset" />
+      </copy>
+
+      <update_idea_lib dest="@{dest}" />
+    </sequential>
+  </macrodef>
+
+</project>
