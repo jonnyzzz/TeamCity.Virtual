@@ -21,6 +21,10 @@
 <c:set var="vm" value="${propertiesBean.properties[ctx.vm]}"/>
 <c:forEach var="it" items="${ctx.vms}">
   <c:if test="${vm eq it.name}">
+    <div class="parameter">
+      Virtualization: <strong><c:out value="${it.caption}"/></strong>
+    </div>
+
     <jsp:include page="${it.view}" />
   </c:if>
 </c:forEach>
