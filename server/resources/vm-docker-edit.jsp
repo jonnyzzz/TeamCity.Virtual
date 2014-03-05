@@ -13,18 +13,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --%>
-
 <%@ include file="/include-internal.jsp"%>
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
-<jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean" />
 
-<c:set var="vm" value="${propertiesBean.properties[ctx.vm]}"/>
-<c:forEach var="it" items="${ctx.vms}">
-  <c:if test="${vm eq it.name}">
-    <jsp:include page="${it.view}" />
-  </c:if>
-</c:forEach>
 
-<div class="parameter">
-  <props:displayValue name="${ctx.script}" showInPopup="${true}"/>
-</div>
+<tr>
+  <th>Image Name:<l:star/></th>
+  <td><props:textProperty name="${ctx.dockerImageName}" className="longField"/></td>
+</tr>

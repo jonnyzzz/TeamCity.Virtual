@@ -15,29 +15,16 @@
   --%>
 
 <%@ include file="/include-internal.jsp"%>
+<jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
-AAAA
 
 <props:selectSectionProperty name="vm_type" title="Virtualization">
 
-  <props:selectSectionPropertyContent value="vagrant" caption="Vagrant">
-    <tr>
-      <th>Image Name:<l:star/></th>
-      <td><props:textProperty name="vagrant-image-name" className="longField"/></td>
-    </tr>
-    <tr>
-      <th>Image Url:</th>
-      <td><props:textProperty name="vagrant-image-url" className="longField"/></td>
-    </tr>
-  </props:selectSectionPropertyContent>
-
-  <props:selectSectionPropertyContent value="docker" caption="Docker">
-    <tr>
-      <th>Image Name:<l:star/></th>
-      <td><props:textProperty name="docker-image-name" className="longField"/></td>
-    </tr>
-  </props:selectSectionPropertyContent>
-
+  <c:forEach var="it" items="${ctx.vms}">
+    <props:selectSectionPropertyContent value="${it.name}" caption="${it.caption}">
+      <jsp:include page="${it.edit}" />
+    </props:selectSectionPropertyContent>
+  </c:forEach>
 </props:selectSectionProperty>
 
 <tr>

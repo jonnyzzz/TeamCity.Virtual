@@ -16,15 +16,7 @@
 
 <%@ include file="/include-internal.jsp"%>
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
-<jsp:useBean id="propertiesBean" scope="request" type="jetbrains.buildServer.controllers.BasePropertiesBean" />
-
-<c:set var="vm" value="${propertiesBean.properties[ctx.vm]}"/>
-<c:forEach var="it" items="${ctx.vms}">
-  <c:if test="${vm eq it.name}">
-    <jsp:include page="${it.view}" />
-  </c:if>
-</c:forEach>
 
 <div class="parameter">
-  <props:displayValue name="${ctx.script}" showInPopup="${true}"/>
+  Image: <strong><props:displayValue name="${ctx.dockerImageName}"/></strong>
 </div>
