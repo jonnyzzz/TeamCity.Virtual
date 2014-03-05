@@ -16,12 +16,16 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
+import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VMConstants {
-  public static final String RUN_TYPE = "jonnyzzz.vm";
+public class Loggers {
 
-  public static final String VAGRANT_PROPERTY = "vagrant";
-  public static final String DOCKER_PROPERTY = "docker";
+  @NotNull
+  public static Logger getLogger(@NotNull final Class<?> clazz) {
+    return Logger.getLogger("jetbrains.buildServer." + clazz.getName());
+  }
 }

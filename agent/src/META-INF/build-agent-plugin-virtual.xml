@@ -8,5 +8,6 @@
         >
 
   <bean class="com.jonnyzzz.teamcity.virtual.VMRunner"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.VMDetector"/>
 
 </beans>
