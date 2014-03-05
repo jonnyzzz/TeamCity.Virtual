@@ -16,22 +16,26 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
-import jetbrains.buildServer.RunBuildException;
-import jetbrains.buildServer.agent.*;
+import jetbrains.buildServer.agent.AgentBuildRunnerInfo;
+import jetbrains.buildServer.agent.BuildAgentConfiguration;
+import jetbrains.buildServer.agent.runner.CommandLineBuildService;
+import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VMRunner implements AgentBuildRunner {
+public class VMRunner implements CommandLineBuildServiceFactory {
+
   @NotNull
-  public BuildProcess createBuildProcess(@NotNull final AgentRunningBuild runningBuild,
-                                         @NotNull final BuildRunnerContext context) throws RunBuildException {
-    throw new RunBuildException("Runner not yet implemented");
+  @Override
+  public CommandLineBuildService createService() {
+    return new VMBuildProcess();
   }
 
   @NotNull
-  public AgentBuildRunnerInfo getRunnerInfo() {
+  @Override
+  public AgentBuildRunnerInfo getBuildRunnerInfo() {
     return new AgentBuildRunnerInfo() {
       @NotNull
       public String getType() {
