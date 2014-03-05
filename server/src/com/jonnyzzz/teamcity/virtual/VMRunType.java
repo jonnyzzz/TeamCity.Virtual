@@ -32,10 +32,10 @@ import static com.jonnyzzz.teamcity.virtual.VMConstants.RUN_TYPE;
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VMBuildRunner extends RunType {
+public class VMRunType extends RunType {
   private final PluginDescriptor myDescriptor;
 
-  public VMBuildRunner(@NotNull final PluginDescriptor descriptor) {
+  public VMRunType(@NotNull final PluginDescriptor descriptor) {
     myDescriptor = descriptor;
   }
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RunnerRegistrar {
   public RunnerRegistrar(@NotNull final RunTypeRegistry registry,
-                         @NotNull final VMBuildRunner runner) {
+                         @NotNull final VMRunType runner) {
     registry.registerRunType(runner);
   }
 }

@@ -7,6 +7,6 @@
         default-autowire="constructor"
         >
 
-  <bean class="com.jonnyzzz.teamcity.virtual.VMBuildRunner"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.VMRunType"/>
   <bean class="com.jonnyzzz.teamcity.virtual.RunnerRegistrar"/>
 </beans>
