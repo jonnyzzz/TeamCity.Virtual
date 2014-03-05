@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public enum VM {
-  DOCKER("docker", "Docker", "vm-docker-edit.jsp", "vm-docker-view.jsp"),
-  VAGRANT("vagrant", "Vagrant", "vm-vagrant-edit.jsp", "vm-vagrant-view.jsp"),
+  DOCKER(VMConstants.VM_DOCKER, "Docker", "vm-docker-edit.jsp", "vm-docker-view.jsp"),
+  VAGRANT(VMConstants.VM_VAGRANT, "Vagrant", "vm-vagrant-edit.jsp", "vm-vagrant-view.jsp"),
   ;
 
   private final String myName;

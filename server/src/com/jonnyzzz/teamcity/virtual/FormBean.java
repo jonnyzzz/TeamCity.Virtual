@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static com.jonnyzzz.teamcity.virtual.VMConstants.*;
+
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
@@ -28,28 +30,27 @@ public class FormBean {
 
   @NotNull
   public String getVm() {
-    return "vm";
+    return PARAMETER_VM;
   }
 
   @NotNull
   public String getScript() {
-    return "script";
+    return PARAMETER_SCRIPT;
   }
-
 
   @NotNull
   public String getDockerImageName() {
-    return "docker-image-name";
+    return PARAMETER_DOCKER_IMAGE_NAME;
   }
 
   @NotNull
   public String getVagrantImageName() {
-    return "vagrant-image-name";
+    return PARAMETER_VAGRANT_IMAGE_NAME;
   }
 
   @NotNull
   public String getVagrantImageUrl() {
-    return "vagrant-image-url";
+    return PARAMETER_VAGRANT_IMAGE_URL;
   }
 
   @NotNull
