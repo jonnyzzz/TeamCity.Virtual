@@ -71,13 +71,13 @@ public class VMRunType extends RunType {
   @Nullable
   @Override
   public String getEditRunnerParamsJspFilePath() {
-    return myDescriptor.getParameterValue("vm-edit.jsp");
+    return myDescriptor.getPluginResourcesPath("vm-edit.jsp");
   }
 
   @Nullable
   @Override
   public String getViewRunnerParamsJspFilePath() {
-    return myDescriptor.getParameterValue("vm-view.jsp");
+    return myDescriptor.getPluginResourcesPath("vm-view.jsp");
   }
 
   @Nullable
