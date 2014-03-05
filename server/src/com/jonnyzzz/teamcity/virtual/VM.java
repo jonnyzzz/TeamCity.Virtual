@@ -16,14 +16,39 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
+import jetbrains.buildServer.serverSide.InvalidProperty;
+import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public enum VM {
-  DOCKER(VMConstants.VM_DOCKER, "Docker", "vm-docker-edit.jsp", "vm-docker-view.jsp"),
-  VAGRANT(VMConstants.VM_VAGRANT, "Vagrant", "vm-vagrant-edit.jsp", "vm-vagrant-view.jsp"),
+  DOCKER(VMConstants.VM_DOCKER, "Docker", "vm-docker-edit.jsp", "vm-docker-view.jsp") {
+    @NotNull
+    @Override
+    public Collection<InvalidProperty> validate(@NotNull final Map<String, String> props) {
+      if (StringUtil.isEmptyOrSpaces(VMConstants.PARAMETER_DOCKER_IMAGE_NAME)) {
+        return Collections.singleton(new InvalidProperty(VMConstants.PARAMETER_DOCKER_IMAGE_NAME, "Image not defined"));
+      }
+      return Collections.emptyList();
+    }
+  },
+  VAGRANT(VMConstants.VM_VAGRANT, "Vagrant", "vm-vagrant-edit.jsp", "vm-vagrant-view.jsp") {
+    @NotNull
+    @Override
+    public Collection<InvalidProperty> validate(@NotNull Map<String, String> props) {
+      if (StringUtil.isEmptyOrSpaces(VMConstants.PARAMETER_VAGRANT_IMAGE_NAME)) {
+        return Collections.singleton(new InvalidProperty(VMConstants.PARAMETER_VAGRANT_IMAGE_NAME, "Image not defined"));
+      }
+      return Collections.emptyList();
+    }
+  },
   ;
 
   private final String myName;
@@ -59,5 +84,16 @@ public enum VM {
   @NotNull
   public String getView() {
     return myView;
+  }
+
+  @NotNull
+  public abstract Collection<InvalidProperty> validate(@NotNull final Map<String, String> props);
+
+  @Nullable
+  public static VM find(@Nullable final String vm) {
+    for (VM v :values()){
+      if (v.getName().equals(vm)) return v;
+    }
+    return null;
   }
 }

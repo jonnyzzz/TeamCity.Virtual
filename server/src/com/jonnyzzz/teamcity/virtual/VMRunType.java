@@ -19,13 +19,12 @@ package com.jonnyzzz.teamcity.virtual;
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
+import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 import static com.jonnyzzz.teamcity.virtual.VMConstants.RUN_TYPE;
 
@@ -63,7 +62,19 @@ public class VMRunType extends RunType {
     return new PropertiesProcessor() {
       @NotNull
       public Collection<InvalidProperty> process(Map<String, String> properties) {
-        return Collections.emptyList();
+        List<InvalidProperty> result = new ArrayList<>();
+        if (StringUtil.isEmptyOrSpaces(properties.get(VMConstants.PARAMETER_SCRIPT))) {
+          result.add(new InvalidProperty(VMConstants.PARAMETER_SCRIPT, "Script should not be empty"));
+        }
+
+        final String vm = properties.get(VMConstants.PARAMETER_VM);
+        final VM w = VM.find(vm);
+        if (w == null) {
+          result.add(new InvalidProperty(VMConstants.PARAMETER_VM, "Unknown VM"));
+        } else {
+          result.addAll(w.validate(properties));
+        }
+        return result;
       }
     };
   }

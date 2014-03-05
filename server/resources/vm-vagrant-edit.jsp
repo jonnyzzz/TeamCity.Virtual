@@ -13,12 +13,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --%>
-<%@ include file="/include-internal.jsp"%>
+<%@ include file="/include-internal.jsp" %>
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 <tr>
   <th>Image Name:<l:star/></th>
-  <td><props:textProperty name="${ctx.vagrantImageName}" className="longField"/></td>
+  <td>
+    <props:textProperty name="${ctx.vagrantImageName}" className="longField"/>
+    <span class="error" id="error:${ctx.vagrantImageName}"></span>
+  </td>
 </tr>
 <tr>
   <th>Image Url:</th>

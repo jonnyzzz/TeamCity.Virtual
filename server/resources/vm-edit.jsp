@@ -18,8 +18,7 @@
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 
-<props:selectSectionProperty name="vm_type" title="Virtualization">
-
+<props:selectSectionProperty name="${ctx.vm}" title="Virtualization">
   <c:forEach var="it" items="${ctx.vms}">
     <props:selectSectionPropertyContent value="${it.name}" caption="${it.caption}">
       <jsp:include page="${it.edit}" />
@@ -30,6 +29,7 @@
 <tr>
   <th>Command:</th>
   <td>
-    <props:multilineProperty name="script" linkTitle="Script to run in the VM" cols="49" rows="8" expanded="${true}"/>
+    <props:multilineProperty name="${ctx.script}" linkTitle="Script to run in the VM" cols="49" rows="8" expanded="${true}"/>
+    <span class="error" id="error:${ctx.script}"></span>
   </td>
 </tr>
