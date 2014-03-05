@@ -4,8 +4,8 @@
   <info>
     <name>TeamCity.Virtual</name>
     <display-name>TeamCity.Virtual</display-name>
-    <description>Build runners for Docker and Vagrant integration</description>
     <version>@Plugin_Version@</version> <!-- will be replaced from script -->
+    <description>Build runners for Docker and Vagrant integration</description>
     <vendor>
       <name>@Plugin_Vendor@</name>  <!-- will be replaced from script -->
       <url>@Plugin_Vendor_Url@</url> <!-- will be replaced from script -->
