@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress AutowiredDependenciesInspection -->
 <beans
         xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,12 +7,6 @@
         default-autowire="constructor"
         >
 
-  <!-- declare all beans you like Spring Dependency Injection to create -->
-  <!-- see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
-
-  <!-- sample: 
-  <bean class="bean class fully qualified name"/>
-  -->
-
+  <bean class="com.jonnyzzz.teamcity.virtual.VMRunner"/>
 
 </beans>
