@@ -67,12 +67,12 @@ public class VagrantVM implements VMRunner {
     );
 
     builder.addTryProcess(
-            block(logger, "vagrant", "Running script",
+            block(logger, "vagrant", "Running the script",
                     cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")))
     );
 
     builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
-            cmd.commandline(workDir, Arrays.asList("vagrant", "destroy"))));
+            cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
   }
 
 
