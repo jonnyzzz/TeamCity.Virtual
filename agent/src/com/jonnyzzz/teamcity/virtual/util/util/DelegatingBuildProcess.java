@@ -38,7 +38,7 @@ public class DelegatingBuildProcess extends BuildProcessBase {
   @Override
   protected final void interruptImpl() {
     super.interruptImpl();
-    BuildProcess process = myReference.get();
+    final BuildProcess process = myReference.get();
     if (process != null) process.interrupt();
   }
 
@@ -46,7 +46,7 @@ public class DelegatingBuildProcess extends BuildProcessBase {
   @Override
   protected final BuildFinishedStatus waitForImpl() throws RunBuildException {
     try {
-      BuildProcess process = myAction.startImpl();
+      final BuildProcess process = myAction.startImpl();
       myReference.set(process);
 
       if (isInterrupted()) return BuildFinishedStatus.INTERRUPTED;
