@@ -50,4 +50,9 @@ public class VMRunnerContext {
     if (path == null) return null;
     return FileUtil.resolvePath(myContext.getBuild().getCheckoutDirectory(), path);
   }
+
+  @NotNull
+  public File getWorkingDirectory() {
+    return myContext.getWorkingDirectory();
+  }
 }

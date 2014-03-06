@@ -15,4 +15,7 @@
 
   <bean class="com.jonnyzzz.teamcity.virtual.VMDetector"/>
   <bean class="com.jonnyzzz.teamcity.virtual.util.util.impl.CommandlineBuildProcessFactoryImpl"/>
+
+  <bean class="com.jonnyzzz.teamcity.virtual.run.ScriptFile"/>
+
 </beans>

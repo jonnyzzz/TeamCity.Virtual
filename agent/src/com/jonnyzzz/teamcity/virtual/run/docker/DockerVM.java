@@ -18,6 +18,7 @@ package com.jonnyzzz.teamcity.virtual.run.docker;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
+import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
@@ -32,6 +33,12 @@ import java.util.Arrays;
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public class DockerVM implements VMRunner {
+  private final ScriptFile myScriptFile;
+
+  public DockerVM(@NotNull final ScriptFile scriptFile) {
+    myScriptFile = scriptFile;
+  }
+
   @NotNull
   @Override
   public String getVMName() {
@@ -53,25 +60,32 @@ public class DockerVM implements VMRunner {
 
     final File baseDir = context.getBuild().getCheckoutDirectory();
     final File workDir = context.getWorkingDirectory();
-    builder.addTryProcess(cmd.commandline(
-            workDir,
-            Arrays.asList(
-                    "sudo",
-                    "docker",
-                    "run",
-                    "--rm=true",
-                    "-v",
-                    baseDir.getPath() + ":/jonnyzzz:rw",
-                    "--workdir=/jonnyzzz/" + FileUtil.getRelativePath(baseDir, workDir),
-                    "--interactive=false",
-                    "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
-                    "--tty=false",
-                    ctx.getImageName(),
-                    "/bin/sh",
-                    "-c",
-                    "\"" + ctx.getScript() + "\""
-            )
-    ));
+
+    myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
+      @Override
+      public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
+        builder.addTryProcess(cmd.commandline(
+                workDir,
+                Arrays.asList(
+                        "sudo",
+                        "docker",
+                        "run",
+                        "--rm=true",
+                        "-v",
+                        baseDir.getPath() + ":/jonnyzzz:rw",
+                        "--workdir=/jonnyzzz/" + FileUtil.getRelativePath(baseDir, workDir),
+                        "--interactive=false",
+                        "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
+                        "--tty=false",
+                        ctx.getImageName(),
+                        "/bin/sh",
+                        "-c",
+                        "\". " + script.getName() + "\""
+                )
+        ));
+      }
+    });
+
       /*docker run --rm=true -v /home/shalupov/work/ui:/work:rw -i -t dockerfile/nodejs bash -c "cd /work && npm install && npm install grunt-cli && ./node_modules/.bin/grunt release"*/
   }
 }

@@ -18,6 +18,7 @@ package com.jonnyzzz.teamcity.virtual.run.vagrant;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
+import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
 import com.jonnyzzz.teamcity.virtual.util.util.DelegatingBuildProcess;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
@@ -35,6 +36,12 @@ import java.util.Arrays;
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public class VagrantVM implements VMRunner {
+  private final ScriptFile myScriptFile;
+
+  public VagrantVM(@NotNull final ScriptFile scriptFile) {
+    myScriptFile = scriptFile;
+  }
+
   @NotNull
   @Override
   public String getVMName() {
@@ -61,18 +68,27 @@ public class VagrantVM implements VMRunner {
     final File workDir = vagrantFile.getParentFile();
     if (workDir == null) throw new RunBuildException("Failed to resolve directory of " + vagrantFile);
 
-    builder.addTryProcess(
-            block(logger, "vagrant", "Starting machine",
-                    cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
-    );
 
-    builder.addTryProcess(
-            block(logger, "vagrant", "Running the script",
-                    cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")))
-    );
+    myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
+      @Override
+      public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
 
-    builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
-            cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
+        builder.addTryProcess(
+                block(logger, "vagrant", "Starting machine",
+                        cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
+        );
+
+        //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
+        builder.addTryProcess(
+                block(logger, "vagrant", "Running the script",
+                        cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")))
+        );
+
+        builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
+                cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
+      }
+    });
+
   }
 
 
