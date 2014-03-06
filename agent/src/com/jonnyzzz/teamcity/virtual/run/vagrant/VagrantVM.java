@@ -19,7 +19,7 @@ package com.jonnyzzz.teamcity.virtual.run.vagrant;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
-import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessContinuation;
+import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.util.FileUtil;
@@ -47,19 +47,18 @@ public class VagrantVM implements VMRunner {
   @Override
   public void constructBuildProcess(@NotNull final BuildRunnerContext context,
                                     @NotNull final CommandlineExecutor cmd,
-                                    @NotNull final BuildProcessContinuation start,
-                                    @NotNull final BuildProcessContinuation finishing) throws RunBuildException {
+                                    @NotNull final TryFinallyBuildProcess builder) throws RunBuildException {
     final File rootDir = context.getBuild().getCheckoutDirectory();
 
     final VagrantContext ctx = new VagrantContext(context);
     final File vagrantFile = ctx.getVagrantFile();
     context.getBuild().getBuildLogger().message("Found " + VMConstants.VAGRANT_FILE + ": " + FileUtil.getRelativePath(rootDir, vagrantFile));
 
-    final File workdir = vagrantFile.getParentFile();
-    if (workdir == null) throw new RunBuildException("Failed to resolve directory of " + vagrantFile);
+    final File workDir = vagrantFile.getParentFile();
+    if (workDir == null) throw new RunBuildException("Failed to resolve directory of " + vagrantFile);
 
-    start.pushBuildProcess(cmd.commandline(workdir, Arrays.asList("vagrant", "up")));
-    start.pushBuildProcess(cmd.commandline(workdir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")));
-    finishing.pushBuildProcess(cmd.commandline(workdir, Arrays.asList("vagrant", "destroy")));
+    builder.addTryProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "up")));
+    builder.addTryProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")));
+    builder.addFinishProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "destroy")));
   }
 }

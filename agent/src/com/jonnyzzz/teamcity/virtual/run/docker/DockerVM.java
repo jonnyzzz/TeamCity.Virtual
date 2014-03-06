@@ -19,7 +19,7 @@ package com.jonnyzzz.teamcity.virtual.run.docker;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
-import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessContinuation;
+import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.util.FileUtil;
@@ -48,13 +48,12 @@ public class DockerVM implements VMRunner {
   @Override
   public void constructBuildProcess(@NotNull final BuildRunnerContext context,
                                     @NotNull final CommandlineExecutor cmd,
-                                    @NotNull final BuildProcessContinuation start,
-                                    @NotNull final BuildProcessContinuation finishing) throws RunBuildException {
+                                    @NotNull final TryFinallyBuildProcess builder) throws RunBuildException {
     final DockerContext ctx = new DockerContext(context);
 
     final File baseDir = context.getBuild().getCheckoutDirectory();
     final File workDir = context.getWorkingDirectory();
-    start.pushBuildProcess(cmd.commandline(
+    builder.addTryProcess(cmd.commandline(
             workDir,
             Arrays.asList(
                     "sudo",

@@ -18,13 +18,19 @@ package com.jonnyzzz.teamcity.virtual.run;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
+import com.jonnyzzz.teamcity.virtual.util.util.CommandlineBuildProcessFactory;
 import com.jonnyzzz.teamcity.virtual.util.util.CompositeBuildProcess;
+import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcessImpl;
 import com.jonnyzzz.teamcity.virtual.util.util.impl.CompositeBuildProcessImpl;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcess;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 
 import static jetbrains.buildServer.agent.BuildFinishedStatus.FINISHED_SUCCESS;
 
@@ -33,9 +39,11 @@ import static jetbrains.buildServer.agent.BuildFinishedStatus.FINISHED_SUCCESS;
  */
 public class VMRunnerFactory {
   private final VMRunner[] myRunners;
+  private CommandlineBuildProcessFactory myCmd;
 
-  public VMRunnerFactory(@NotNull final VMRunner[] runners) {
+  public VMRunnerFactory(@NotNull final VMRunner[] runners, @NotNull final CommandlineBuildProcessFactory cmd) {
     myRunners = runners;
+    myCmd = cmd;
   }
 
   @NotNull
@@ -53,11 +61,21 @@ public class VMRunnerFactory {
       }
     });
 
+    final CommandlineExecutor exec = new CommandlineExecutor() {
+      @NotNull
+      @Override
+      public BuildProcess commandline(@NotNull final File workdir, @NotNull Collection<String> arguments) throws RunBuildException {
+        return myCmd.executeCommandLine(context, arguments, workdir, Collections.<String, String>emptyMap());
+      }
+    };
+
     proc.pushBuildProcess(new BuildProcessBase() {
       @NotNull
       @Override
       protected BuildFinishedStatus waitForImpl() throws RunBuildException {
-        runner.constructBuildProcess(context, proc);
+        final TryFinallyBuildProcessImpl tf = new TryFinallyBuildProcessImpl(context.getBuild().getBuildLogger());
+        runner.constructBuildProcess(context, exec, tf);
+        proc.pushBuildProcess(tf.asBuildProcess());
         return FINISHED_SUCCESS;
       }
     });

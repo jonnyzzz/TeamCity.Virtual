@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package com.jonnyzzz.teamcity.virtual.run;
+package com.jonnyzzz.teamcity.virtual.util.util;
 
-import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
-import jetbrains.buildServer.RunBuildException;
-import jetbrains.buildServer.agent.BuildRunnerContext;
+import jetbrains.buildServer.agent.BuildProcess;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public interface VMRunner {
-  @NotNull String getVMName();
-  @NotNull String getCaption();
+public interface TryFinallyBuildProcess {
+  void addTryProcess(@NotNull BuildProcess proc);
 
-  /**
-   * Called to create runner execution steps
-   * @param context context of runner
-   * @param builder handler for processes
-   */
-  void constructBuildProcess(@NotNull final BuildRunnerContext context,
-                             @NotNull final CommandlineExecutor cmd,
-                             @NotNull final TryFinallyBuildProcess builder) throws RunBuildException;
+  void addFinishProcess(@NotNull BuildProcess proc);
 }
