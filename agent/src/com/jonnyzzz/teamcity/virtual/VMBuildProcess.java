@@ -63,6 +63,7 @@ public class VMBuildProcess extends BuildServiceAdapter {
     @NotNull
     @Override
     public ProgramCommandLine getProgramCommandline() throws RunBuildException {
+      /*docker run --rm=true -v /home/shalupov/work/ui:/work:rw -i -t dockerfile/nodejs bash -c "cd /work && npm install && npm install grunt-cli && ./node_modules/.bin/grunt release"*/
       throw new RunBuildException("Not implemented");
     }
   }
