@@ -32,7 +32,6 @@ import java.util.Map;
 public interface CommandlineBuildProcessFactory {
   @NotNull
   BuildProcess executeCommandLine(@NotNull BuildRunnerContext hostContext,
-                                  @NotNull String program,
                                   @NotNull Collection<String> argz,
                                   @NotNull File workingDir,
                                   @NotNull Map<String, String> additionalEnvironment) throws RunBuildException;

@@ -82,7 +82,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addRunnerParameter(SimpleRunnerConstants.SCRIPT_CONTENT, "program \" foo \"");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "program", Arrays.asList("\"", "foo", "\""), myWorkDir, Collections.<String, String>emptyMap());
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("program", "\"", "foo", "\""), myWorkDir, Collections.<String, String>emptyMap());
 
     m.assertIsSatisfied();
   }
@@ -94,7 +94,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addRunnerParameter(SimpleRunnerConstants.SCRIPT_CONTENT, "program \" \" foo\" \"");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "program", Arrays.asList("\"", "\" foo\"", "\""), myWorkDir, Collections.<String, String>emptyMap());
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("program", "\"", "\" foo\"", "\""), myWorkDir, Collections.<String, String>emptyMap());
 
     m.assertIsSatisfied();
   }
@@ -106,7 +106,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addRunnerParameter(SimpleRunnerConstants.SCRIPT_CONTENT, "program \" \"f o o\" \"z e\" \"");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "program", Arrays.asList("\"", "f o o", "z e", "\""), myWorkDir, Collections.<String, String>emptyMap());
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("program", "\"", "f o o", "z e", "\""), myWorkDir, Collections.<String, String>emptyMap());
 
     m.assertIsSatisfied();
   }
@@ -119,7 +119,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addEnvironmentVariable("a", "b");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "program", Collections.<String>emptyList(), myWorkDir, Collections.singletonMap("a", "b"));
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("program"), myWorkDir, Collections.singletonMap("a", "b"));
 
     m.assertIsSatisfied();
   }
@@ -132,7 +132,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addEnvironmentVariable("a", "b");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "p r o g r a m", Collections.<String>emptyList(), myWorkDir, Collections.singletonMap("a", "b"));
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("p r o g r a m"), myWorkDir, Collections.singletonMap("a", "b"));
 
     m.assertIsSatisfied();
   }
@@ -145,7 +145,7 @@ public class CommandlineBuildProcessFactoryTest extends BaseTestCase {
       oneOf(mySubContext).addEnvironmentVariable("a", "b");
     }});
 
-    myFactory.executeCommandLine(myRootContext, "p r o g r a m", Arrays.asList("a", "b c d e", "f"), myWorkDir, Collections.singletonMap("a", "b"));
+    myFactory.executeCommandLine(myRootContext, Arrays.asList("p r o g r a m", "a", "b c d e", "f"), myWorkDir, Collections.singletonMap("a", "b"));
 
     m.assertIsSatisfied();
   }

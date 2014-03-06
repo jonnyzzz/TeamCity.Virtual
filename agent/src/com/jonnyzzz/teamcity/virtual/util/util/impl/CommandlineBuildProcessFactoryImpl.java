@@ -43,7 +43,6 @@ public class CommandlineBuildProcessFactoryImpl implements CommandlineBuildProce
 
   @NotNull
   public BuildProcess executeCommandLine(@NotNull BuildRunnerContext hostContext,
-                                         @NotNull String program,
                                          @NotNull Collection<String> argz,
                                          @NotNull File workingDir,
                                          @NotNull final Map<String, String> additionalEnvironment) throws RunBuildException {
@@ -58,13 +57,10 @@ public class CommandlineBuildProcessFactoryImpl implements CommandlineBuildProce
       context.addEnvironmentVariable(entry.getKey(), entry.getValue());
     }
 
-    final List<String> newArgz = new ArrayList<String>();
-    newArgz.add(program);
-    newArgz.addAll(argz);
-
+    final List<String> newArgz = new ArrayList<>(argz);
     final String commandLine = joinCommandLineArguments(newArgz);
 
-    hostContext.getBuild().getBuildLogger().message("NuGet command: " + commandLine);
+    hostContext.getBuild().getBuildLogger().message("Executing script:\n" + commandLine);
 
     context.addRunnerParameter(SimpleRunnerConstants.USE_CUSTOM_SCRIPT, "true");
     context.addRunnerParameter(SimpleRunnerConstants.SCRIPT_CONTENT, commandLine);
