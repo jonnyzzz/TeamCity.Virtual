@@ -26,6 +26,8 @@
   </c:forEach>
 </props:selectSectionProperty>
 
+<props:workingDirectory/>
+
 <tr>
   <th>Command:</th>
   <td>
