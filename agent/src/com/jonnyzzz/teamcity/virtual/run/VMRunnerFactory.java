@@ -17,10 +17,7 @@
 package com.jonnyzzz.teamcity.virtual.run;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
-import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
-import com.jonnyzzz.teamcity.virtual.util.util.CommandlineBuildProcessFactory;
-import com.jonnyzzz.teamcity.virtual.util.util.CompositeBuildProcess;
-import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcessImpl;
+import com.jonnyzzz.teamcity.virtual.util.util.*;
 import com.jonnyzzz.teamcity.virtual.util.util.impl.CompositeBuildProcessImpl;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
@@ -64,8 +61,19 @@ public class VMRunnerFactory {
     final CommandlineExecutor exec = new CommandlineExecutor() {
       @NotNull
       @Override
-      public BuildProcess commandline(@NotNull final File workdir, @NotNull Collection<String> arguments) throws RunBuildException {
-        return myCmd.executeCommandLine(context, arguments, workdir, Collections.<String, String>emptyMap());
+      public BuildProcess commandline(@NotNull final File workdir, @NotNull final Collection<String> arguments) throws RunBuildException {
+        return new DelegatingBuildProcess(new DelegatingBuildProcess.Action() {
+          @NotNull
+          @Override
+          public BuildProcess startImpl() throws RunBuildException {
+            return myCmd.executeCommandLine(context, arguments, workdir, Collections.<String, String>emptyMap());
+          }
+
+          @Override
+          public void finishedImpl() {
+
+          }
+        });
       }
     };
 
