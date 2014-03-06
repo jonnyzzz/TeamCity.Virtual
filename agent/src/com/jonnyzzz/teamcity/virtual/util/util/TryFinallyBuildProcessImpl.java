@@ -29,13 +29,12 @@ import org.jetbrains.annotations.NotNull;
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public class TryFinallyBuildProcessImpl implements TryFinallyBuildProcess {
-  private final Logger LOG = Loggers.getLogger(TryFinallyBuildProcessImpl.class);
 
-  private final BuildProgressLogger myLogger;
+  private final ErrorLogger myLogger;
   private final CompositeBuildProcess myTryProcess = new CompositeBuildProcessImpl();
   private final CompositeBuildProcess myFinallyProcess = new CompositeBuildProcessImpl();
 
-  public TryFinallyBuildProcessImpl(@NotNull final BuildProgressLogger logger) {
+  public TryFinallyBuildProcessImpl(@NotNull final ErrorLogger logger) {
     myLogger = logger;
   }
 
@@ -108,10 +107,27 @@ public class TryFinallyBuildProcessImpl implements TryFinallyBuildProcess {
     try {
       action.execute();
     } catch (Throwable e) {
+      myLogger.onError(message, e);
+    }
+  }
+
+  public interface ErrorLogger {
+    void onError(@NotNull final String message, @NotNull final Throwable error);
+  }
+
+  public static class RunnerErrorLogger implements ErrorLogger {
+    private final Logger LOG = Loggers.getLogger(RunnerErrorLogger.class);
+    private BuildProgressLogger myLogger;
+
+    public RunnerErrorLogger(@NotNull final BuildProgressLogger logger) {
+      myLogger = logger;
+    }
+
+    @Override
+    public void onError(@NotNull final String message, @NotNull final Throwable e) {
       myLogger.error(message + ". " + e.getMessage());
       LOG.warn(message + ". " + e.getMessage(), e);
     }
-
   }
 
 }

@@ -81,7 +81,7 @@ public class VMRunnerFactory {
       @NotNull
       @Override
       protected BuildFinishedStatus waitForImpl() throws RunBuildException {
-        final TryFinallyBuildProcessImpl tf = new TryFinallyBuildProcessImpl(context.getBuild().getBuildLogger());
+        final TryFinallyBuildProcessImpl tf = new TryFinallyBuildProcessImpl(new TryFinallyBuildProcessImpl.RunnerErrorLogger(context.getBuild().getBuildLogger()));
         runner.constructBuildProcess(context, exec, tf);
         proc.pushBuildProcess(tf.asBuildProcess());
         return FINISHED_SUCCESS;
