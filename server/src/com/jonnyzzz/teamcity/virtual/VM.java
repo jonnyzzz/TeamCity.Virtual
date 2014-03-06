@@ -16,11 +16,14 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
+import jetbrains.buildServer.requirements.Requirement;
+import jetbrains.buildServer.requirements.RequirementType;
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -38,6 +41,12 @@ public enum VM {
       }
       return Collections.emptyList();
     }
+
+    @NotNull
+    @Override
+    public Collection<Requirement> requirements(@NotNull Map<String, String> runParameters) {
+      return Arrays.asList(new Requirement(VMConstants.VM_DOCKER, null, RequirementType.EXISTS));
+    }
   },
   VAGRANT(VMConstants.VM_VAGRANT, "Vagrant", "vm-vagrant-edit.jsp", "vm-vagrant-view.jsp") {
     @NotNull
@@ -47,6 +56,11 @@ public enum VM {
         return Collections.singleton(new InvalidProperty(VMConstants.PARAMETER_VAGRANT_FILE, "Vagrant file path is not defined"));
       }
       return Collections.emptyList();
+    }
+    @NotNull
+    @Override
+    public Collection<Requirement> requirements(@NotNull Map<String, String> runParameters) {
+      return Arrays.asList(new Requirement(VMConstants.VM_VAGRANT, null, RequirementType.EXISTS));
     }
   },
   ;
@@ -96,4 +110,7 @@ public enum VM {
     }
     return null;
   }
+
+  @NotNull
+  public abstract Collection<Requirement> requirements(@NotNull final Map<String, String> runParameters);
 }

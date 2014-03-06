@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
+import jetbrains.buildServer.requirements.Requirement;
 import jetbrains.buildServer.serverSide.InvalidProperty;
 import jetbrains.buildServer.serverSide.PropertiesProcessor;
 import jetbrains.buildServer.serverSide.RunType;
@@ -95,5 +96,21 @@ public class VMRunType extends RunType {
   @Override
   public Map<String, String> getDefaultRunnerProperties() {
     return Collections.emptyMap();
+  }
+
+
+  @NotNull
+  @Override
+  public List<Requirement> getRunnerSpecificRequirements(@NotNull Map<String, String> runParameters) {
+    final List<Requirement> requirements = new ArrayList<>(super.getRunnerSpecificRequirements(runParameters));
+
+    final String vm = runParameters.get(VMConstants.PARAMETER_VM);
+    final VM w = VM.find(vm);
+
+    if (w != null) {
+      requirements.addAll(w.requirements(runParameters));
+    }
+
+    return requirements;
   }
 }
