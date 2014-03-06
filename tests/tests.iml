@@ -21,7 +21,7 @@
     <orderEntry type="library" name="Agent-Api" level="project" />
     <orderEntry type="library" name="log4j" level="project" />
     <orderEntry type="library" name="TeamCity server runtime" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="TeamCity agent runtime" level="project" />
+    <orderEntry type="library" name="TeamCity agent runtime" level="project" />
     <orderEntry type="library" name="Common-Impl" level="project" />
     <orderEntry type="library" name="Server-Api" level="project" />
     <orderEntry type="library" name="Idea-OpenApi" level="project" />
