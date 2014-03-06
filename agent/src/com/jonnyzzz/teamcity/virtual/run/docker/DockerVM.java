@@ -78,9 +78,9 @@ public class DockerVM implements VMRunner {
                         "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
                         "--tty=false",
                         ctx.getImageName(),
-                        "/bin/sh",
+                        "/bin/bash",  ///TODO: imagine OS without bash
                         "-c",
-                        "\". " + script.getName() + "\""
+                        "\"source " + script.getName() + "\""
                 )
         ));
       }
