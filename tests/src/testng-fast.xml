@@ -1,9 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="TeamCity.Virtual tests">
-  <test name="TeamCity.Virtual tests">
-    <classes>
-      <class name="SimpleTest"/>
-    </classes>
-  </test>
-</suite>
-
