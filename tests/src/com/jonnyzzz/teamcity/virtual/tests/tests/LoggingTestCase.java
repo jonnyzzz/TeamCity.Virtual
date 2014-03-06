@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.nuget.tests;
+package com.jonnyzzz.teamcity.virtual.tests.tests;
 
 import jetbrains.buildServer.BaseTestCase;
 import jetbrains.buildServer.util.StringUtil;

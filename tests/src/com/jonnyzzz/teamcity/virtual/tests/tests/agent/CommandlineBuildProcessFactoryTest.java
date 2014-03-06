@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.nuget.tests.agent;
+package com.jonnyzzz.teamcity.virtual.tests.tests.agent;
 
 import jetbrains.buildServer.BaseTestCase;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.*;
-import jetbrains.buildServer.nuget.agent.util.CommandlineBuildProcessFactory;
-import jetbrains.buildServer.nuget.agent.util.impl.CommandlineBuildProcessFactoryImpl;
+import com.jonnyzzz.teamcity.virtual.util.util.CommandlineBuildProcessFactory;
+import com.jonnyzzz.teamcity.virtual.util.util.impl.CommandlineBuildProcessFactoryImpl;
 import jetbrains.buildServer.runner.SimpleRunnerConstants;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

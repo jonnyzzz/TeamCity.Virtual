@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.nuget.agent.util.impl;
+package com.jonnyzzz.teamcity.virtual.util.util.impl;
 
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProcess;
 import jetbrains.buildServer.agent.BuildProcessFacade;
 import jetbrains.buildServer.agent.BuildRunnerContext;
-import jetbrains.buildServer.nuget.agent.util.CommandlineBuildProcessFactory;
+import com.jonnyzzz.teamcity.virtual.util.util.CommandlineBuildProcessFactory;
 import jetbrains.buildServer.runner.SimpleRunnerConstants;
 import org.jetbrains.annotations.NotNull;
 

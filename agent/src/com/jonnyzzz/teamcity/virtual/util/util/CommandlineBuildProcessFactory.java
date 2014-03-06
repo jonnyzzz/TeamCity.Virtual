@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.nuget.agent.util;
+package com.jonnyzzz.teamcity.virtual.util.util;
 
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProcess;

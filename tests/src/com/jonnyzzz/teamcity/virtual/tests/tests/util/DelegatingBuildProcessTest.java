@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package jetbrains.buildServer.nuget.tests.util;
+package com.jonnyzzz.teamcity.virtual.tests.tests.util;
 
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcess;
-import jetbrains.buildServer.nuget.agent.util.DelegatingBuildProcess;
+import com.jonnyzzz.teamcity.virtual.util.util.DelegatingBuildProcess;
 import org.jetbrains.annotations.NotNull;
 import org.testng.Assert;
 import org.testng.annotations.Test;
