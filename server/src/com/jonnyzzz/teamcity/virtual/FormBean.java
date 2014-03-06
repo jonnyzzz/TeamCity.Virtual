@@ -44,13 +44,8 @@ public class FormBean {
   }
 
   @NotNull
-  public String getVagrantImageName() {
-    return PARAMETER_VAGRANT_IMAGE_NAME;
-  }
-
-  @NotNull
-  public String getVagrantImageUrl() {
-    return PARAMETER_VAGRANT_IMAGE_URL;
+  public String getVagrantFile() {
+    return PARAMETER_VAGRANT_FILE;
   }
 
   @NotNull

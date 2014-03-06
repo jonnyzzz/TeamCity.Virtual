@@ -18,5 +18,5 @@
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 <div class="parameter">
-  Image: <strong><props:displayValue name="${ctx.vagrantImageName}"/></strong>
+  Image: <strong><props:displayValue name="${ctx.vagrantFile}"/></strong>
 </div>

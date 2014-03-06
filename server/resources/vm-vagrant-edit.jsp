@@ -17,13 +17,9 @@
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 <tr>
-  <th>Image Name:<l:star/></th>
+  <th>Path to Vagrant file:<l:star/></th>
   <td>
-    <props:textProperty name="${ctx.vagrantImageName}" className="longField"/>
-    <span class="error" id="error:${ctx.vagrantImageName}"></span>
+    <props:textProperty name="${ctx.vagrantFile}" className="longField"/>
+    <span class="error" id="error:${ctx.vagrantFile}"></span>
   </td>
-</tr>
-<tr>
-  <th>Image Url:</th>
-  <td><props:textProperty name="${ctx.vagrantImageUrl}" className="longField"/></td>
 </tr>
