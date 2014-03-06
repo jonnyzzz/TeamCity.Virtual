@@ -16,26 +16,18 @@
 
 package com.jonnyzzz.teamcity.virtual.run;
 
-import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessContinuation;
 import jetbrains.buildServer.RunBuildException;
-import jetbrains.buildServer.agent.BuildRunnerContext;
+import jetbrains.buildServer.agent.BuildProcess;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.Collection;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public interface VMRunner {
-  @NotNull String getVMName();
-  @NotNull String getCaption();
-
-  /**
-   * Called to create runner execution steps
-   * @param context context of runner
-   * @param start add here runner actions
-   * @param finishing here goes finally actions that are executed even if there were failure
-   */
-  void constructBuildProcess(@NotNull final BuildRunnerContext context,
-                             @NotNull final CommandlineExecutor cmd,
-                             @NotNull final BuildProcessContinuation start,
-                             @NotNull final BuildProcessContinuation finishing) throws RunBuildException;
+public interface CommandlineExecutor {
+  @NotNull
+  BuildProcess commandline(@NotNull final File workdir,
+                           @NotNull final Collection<String> arguments) throws RunBuildException;
 }
