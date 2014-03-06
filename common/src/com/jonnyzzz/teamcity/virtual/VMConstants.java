@@ -33,4 +33,8 @@ public class VMConstants {
   public static final String PARAMETER_DOCKER_IMAGE_NAME = "docker-image-name";
   public static final String PARAMETER_VAGRANT_IMAGE_NAME = "vagrant-image-name";
   public static final String PARAMETER_VAGRANT_IMAGE_URL = "vagrant-image-url";
+  public static final String PARAMETER_VAGRANT_FILE = "vagrant-file";
+
+
+  public static final String VAGRANT_FILE = "Vagrantfile";
 }
