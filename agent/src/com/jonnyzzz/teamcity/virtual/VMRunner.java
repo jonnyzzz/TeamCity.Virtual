@@ -16,26 +16,32 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
-import jetbrains.buildServer.agent.AgentBuildRunnerInfo;
-import jetbrains.buildServer.agent.BuildAgentConfiguration;
-import jetbrains.buildServer.agent.runner.CommandLineBuildService;
-import jetbrains.buildServer.agent.runner.CommandLineBuildServiceFactory;
+import com.jonnyzzz.teamcity.virtual.run.VMRunnerFactory;
+import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VMRunner implements CommandLineBuildServiceFactory {
+public class VMRunner implements AgentBuildRunner {
+  private final VMRunnerFactory myFactory;
 
-  @NotNull
-  @Override
-  public CommandLineBuildService createService() {
-    return new VMBuildProcess();
+  public VMRunner(@NotNull final VMRunnerFactory factory) {
+    myFactory = factory;
   }
 
   @NotNull
   @Override
-  public AgentBuildRunnerInfo getBuildRunnerInfo() {
+  public BuildProcess createBuildProcess(@NotNull AgentRunningBuild runningBuild,
+                                         @NotNull BuildRunnerContext context) throws RunBuildException {
+
+    return myFactory.createBuildRunnerProcess(context);
+  }
+
+  @NotNull
+  @Override
+  public AgentBuildRunnerInfo getRunnerInfo() {
     return new AgentBuildRunnerInfo() {
       @NotNull
       public String getType() {

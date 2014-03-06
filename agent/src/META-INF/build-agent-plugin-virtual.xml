@@ -8,6 +8,11 @@
         >
 
   <bean class="com.jonnyzzz.teamcity.virtual.VMRunner"/>
-  <bean class="com.jonnyzzz.teamcity.virtual.VMDetector"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.run.VMRunnerFactory"/>
 
+  <bean class="com.jonnyzzz.teamcity.virtual.run.DockerVM"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.run.VagrantVM"/>
+
+  <bean class="com.jonnyzzz.teamcity.virtual.VMDetector"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.util.util.impl.CommandlineBuildProcessFactoryImpl"/>
 </beans>
