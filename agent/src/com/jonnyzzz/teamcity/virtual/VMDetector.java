@@ -66,7 +66,7 @@ public class VMDetector {
           return;
         }
 
-        final String output = executeCommandWithShell("docker", "docker --version");
+        final String output = executeCommandWithShell("docker", "sudo docker --version");
         if (output == null) return;
 
         String ver = output.toLowerCase().trim();
