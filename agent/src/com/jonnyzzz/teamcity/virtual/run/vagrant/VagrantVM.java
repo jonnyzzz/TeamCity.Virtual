@@ -19,8 +19,11 @@ package com.jonnyzzz.teamcity.virtual.run.vagrant;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
+import com.jonnyzzz.teamcity.virtual.util.util.DelegatingBuildProcess;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.BuildProcess;
+import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,13 +55,44 @@ public class VagrantVM implements VMRunner {
 
     final VagrantContext ctx = new VagrantContext(context);
     final File vagrantFile = ctx.getVagrantFile();
-    context.getBuild().getBuildLogger().message("Found " + VMConstants.VAGRANT_FILE + ": " + FileUtil.getRelativePath(rootDir, vagrantFile));
+    final BuildProgressLogger logger = context.getBuild().getBuildLogger();
+    logger.message("Found " + VMConstants.VAGRANT_FILE + ": " + FileUtil.getRelativePath(rootDir, vagrantFile));
 
     final File workDir = vagrantFile.getParentFile();
     if (workDir == null) throw new RunBuildException("Failed to resolve directory of " + vagrantFile);
 
-    builder.addTryProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "up")));
-    builder.addTryProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")));
-    builder.addFinishProcess(cmd.commandline(workDir, Arrays.asList("vagrant", "destroy")));
+    builder.addTryProcess(
+            block(logger, "vagrant", "Starting machine",
+                    cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
+    );
+
+    builder.addTryProcess(
+            block(logger, "vagrant", "Running script",
+                    cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")))
+    );
+
+    builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
+            cmd.commandline(workDir, Arrays.asList("vagrant", "destroy"))));
+  }
+
+
+  @NotNull
+  private BuildProcess block(@NotNull final BuildProgressLogger logger,
+                             @NotNull final String blockName,
+                             @NotNull final String blockText,
+                             @NotNull final BuildProcess proc) {
+    return new DelegatingBuildProcess(new DelegatingBuildProcess.Action() {
+      @NotNull
+      @Override
+      public BuildProcess startImpl() throws RunBuildException {
+        logger.activityStarted(blockName, blockText, "vm");
+        return proc;
+      }
+
+      @Override
+      public void finishedImpl() {
+        logger.activityFinished(blockName, "vm");
+      }
+    });
   }
 }
