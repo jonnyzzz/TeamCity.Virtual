@@ -12,7 +12,7 @@
 
   <bean class="com.jonnyzzz.teamcity.virtual.run.docker.DockerVM"/>
   <bean class="com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantVM"/>
-  <bean class="com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFileGenerator"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher"/>
 
   <bean class="com.jonnyzzz.teamcity.virtual.VMDetector"/>
   <bean class="com.jonnyzzz.teamcity.virtual.util.util.impl.CommandlineBuildProcessFactoryImpl"/>

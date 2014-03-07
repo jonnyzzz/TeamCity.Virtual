@@ -31,7 +31,7 @@ import java.io.IOException;
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VagrantFileGenerator {
+public class VagrantFilePatcher {
 
   public void generateVagrantFile(@NotNull final VagrantContext context,
                                   @NotNull final BuildProgressLogger logger,

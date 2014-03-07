@@ -34,19 +34,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFileGenerator.WithGeneratedVagrantfile;
+import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher.WithGeneratedVagrantfile;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public class VagrantVM implements VMRunner {
   private final ScriptFile myScriptFile;
-  private final VagrantFileGenerator myVagrantFileGenerator;
+  private final VagrantFilePatcher myVagrantFilePatcher;
 
   public VagrantVM(@NotNull final ScriptFile scriptFile,
-                   @NotNull final VagrantFileGenerator vagrantFileGenerator) {
+                   @NotNull final VagrantFilePatcher vagrantFilePatcher) {
     myScriptFile = scriptFile;
-    myVagrantFileGenerator = vagrantFileGenerator;
+    myVagrantFilePatcher = vagrantFilePatcher;
   }
 
   @NotNull
@@ -80,7 +80,7 @@ public class VagrantVM implements VMRunner {
       @Override
       public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
 
-        myVagrantFileGenerator.generateVagrantFile(ctx, logger, workDir, builder, new WithGeneratedVagrantfile() {
+        myVagrantFilePatcher.generateVagrantFile(ctx, logger, workDir, builder, new WithGeneratedVagrantfile() {
           @Override
           public void execute(@NotNull final File generatedVagrantFile,
                               @NotNull final String relativePath) throws RunBuildException {
