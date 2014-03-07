@@ -52,15 +52,4 @@ public class VagrantContext extends VMRunnerContext {
     if (!path.isFile()) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
     return path;
   }
-
-
-  /**
-   * @return for Windows returns c:\\, for other returns /
-   */
-  @NotNull
-  public String getRootPath() {
-    //TODO: fix for windows
-    return "/jonnyzzz/";
-  }
-
 }
