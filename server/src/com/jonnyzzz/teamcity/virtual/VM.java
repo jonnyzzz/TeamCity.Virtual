@@ -52,9 +52,6 @@ public enum VM {
     @NotNull
     @Override
     public Collection<InvalidProperty> validate(@NotNull Map<String, String> props) {
-      if (StringUtil.isEmptyOrSpaces(VMConstants.PARAMETER_VAGRANT_FILE)) {
-        return Collections.singleton(new InvalidProperty(VMConstants.PARAMETER_VAGRANT_FILE, "Vagrant file path is not defined"));
-      }
       return Collections.emptyList();
     }
     @NotNull

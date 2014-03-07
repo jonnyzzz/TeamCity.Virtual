@@ -17,7 +17,7 @@
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 <tr>
-  <th>Path to Vagrant file:<l:star/></th>
+  <th>Path to Vagrant file:</th>
   <td>
     <props:textProperty name="${ctx.vagrantFile}" className="longField"/>
     <span class="error" id="error:${ctx.vagrantFile}"></span>
