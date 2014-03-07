@@ -18,12 +18,12 @@ package com.jonnyzzz.teamcity.virtual.run.docker;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
+import com.jonnyzzz.teamcity.virtual.run.RelativePaths;
 import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
-import jetbrains.buildServer.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -73,7 +73,7 @@ public class DockerVM implements VMRunner {
                         "--rm=true",
                         "-v",
                         baseDir.getPath() + ":/jonnyzzz:rw",
-                        "--workdir=/jonnyzzz/" + FileUtil.getRelativePath(baseDir, workDir),
+                        "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
                         "--interactive=false",
                         "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
                         "--tty=false",

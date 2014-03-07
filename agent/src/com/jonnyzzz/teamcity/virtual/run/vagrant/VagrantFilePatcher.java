@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual.run.vagrant;
 
+import com.jonnyzzz.teamcity.virtual.run.RelativePaths;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
@@ -80,7 +81,7 @@ public class VagrantFilePatcher {
         });
 
         final File mountRoot = context.getCheckoutDirectory();
-        final String relativePath = context.getRootPath() + FileUtil.getRelativePath(mountRoot, context.getWorkingDirectory());
+        final String relativePath = context.getRootPath() + RelativePaths.resolveRelativePath(mountRoot, context.getWorkingDirectory());
 
         final String patch = generateVagrantfile(mountRoot, relativePath);
         logger.activityStarted("generate", "Added to the end of the Vagrantfile", "vagrant");
