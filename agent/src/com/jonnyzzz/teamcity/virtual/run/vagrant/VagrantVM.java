@@ -90,7 +90,7 @@ public class VagrantVM implements VMRunner {
             //TODO: fix windows case here ( bash => parameters ), slashes
             builder.addTryProcess(
                     block(logger, "vagrant", "Running the script",
-                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c '. " + relativePath + "/" + script.getName() + "'\"")))
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c 'cd " + relativePath + " && . " + script.getName() + "'\"")))
             );
 
             builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
