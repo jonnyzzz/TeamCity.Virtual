@@ -55,4 +55,9 @@ public class VMRunnerContext {
   public File getWorkingDirectory() {
     return myContext.getWorkingDirectory();
   }
+
+  @NotNull
+  public File getCheckoutDirectory() {
+    return myContext.getBuild().getCheckoutDirectory();
+  }
 }

@@ -58,8 +58,8 @@ public class DockerVM implements VMRunner {
                                     @NotNull final TryFinallyBuildProcess builder) throws RunBuildException {
     final DockerContext ctx = new DockerContext(context);
 
-    final File baseDir = context.getBuild().getCheckoutDirectory();
-    final File workDir = context.getWorkingDirectory();
+    final File baseDir = ctx.getCheckoutDirectory();
+    final File workDir = ctx.getWorkingDirectory();
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override

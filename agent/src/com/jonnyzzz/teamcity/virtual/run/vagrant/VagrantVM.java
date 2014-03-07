@@ -31,15 +31,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+
+import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFileGenerator.WithGeneratedVagrantfile;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public class VagrantVM implements VMRunner {
   private final ScriptFile myScriptFile;
+  private final VagrantFileGenerator myVagrantFileGenerator;
 
-  public VagrantVM(@NotNull final ScriptFile scriptFile) {
+  public VagrantVM(@NotNull final ScriptFile scriptFile,
+                   @NotNull final VagrantFileGenerator vagrantFileGenerator) {
     myScriptFile = scriptFile;
+    myVagrantFileGenerator = vagrantFileGenerator;
   }
 
   @NotNull
@@ -71,24 +78,31 @@ public class VagrantVM implements VMRunner {
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
-      public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
+      public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
 
-        builder.addTryProcess(
-                block(logger, "vagrant", "Starting machine",
-                        cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
-        );
+        myVagrantFileGenerator.generateVagrantFile(ctx, logger, workDir, builder, new WithGeneratedVagrantfile() {
+          @Override
+          public void execute(@NotNull final File generatedVagrantFile,
+                              @NotNull final String relativePath) throws RunBuildException {
+            final Map<String, String> extraEnv = Collections.singletonMap("VAGRANT_CWD", generatedVagrantFile.getParentFile().getPath());
+            builder.addTryProcess(
+                    block(logger, "vagrant", "Starting machine",
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "up"), extraEnv))
+            );
 
-        //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
-        builder.addTryProcess(
-                block(logger, "vagrant", "Running the script",
-                        cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"" + ctx.getScript() + "\"")))
-        );
+            //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
+            //TODO: fix windows case here ( bash => parameters ), slashes
+            builder.addTryProcess(
+                    block(logger, "vagrant", "Running the script",
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c '. " + relativePath + "/" + script.getName() + "'\""), extraEnv))
+            );
 
-        builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
-                cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
+            builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
+                    cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"), extraEnv)));
+          }
+        });
       }
     });
-
   }
 
 

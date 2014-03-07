@@ -47,4 +47,13 @@ public class VagrantContext extends VMRunnerContext {
   }
 
 
+  /**
+   * @return for Windows returns c:\\, for other returns /
+   */
+  @NotNull
+  public String getRootPath() {
+    //TODO: fix for windows
+    return "/jonnyzzz/";
+  }
+
 }
