@@ -35,4 +35,8 @@ public class VMConstants {
 
 
   public static final String VAGRANT_FILE = "Vagrantfile";
+
+  public static final String PARAMETER_VM_OS_WINDOWS = "win";
+  public static final String PARAMETER_VM_OS_LINUX = "linux";
+  public static final String PARAMETER_VAGRANT_OS = "vagrant-os";
 }

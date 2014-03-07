@@ -23,3 +23,15 @@
     <span class="error" id="error:${ctx.vagrantFile}"></span>
   </td>
 </tr>
+
+<tr>
+  <th>Guest OS:</th>
+  <td>
+    <forms:select name="${ctx.vagrantOS}">
+      <c:forEach var="it" items="${ctx.OSs}">
+        <forms:option value="${it.name}"><c:out value="${it.caption}"/></forms:option>
+      </c:forEach>
+    </forms:select>
+  </td>
+</tr>
+

@@ -18,48 +18,36 @@ package com.jonnyzzz.teamcity.virtual;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import static com.jonnyzzz.teamcity.virtual.VMConstants.*;
+import static com.jonnyzzz.teamcity.virtual.VMConstants.PARAMETER_VM_OS_LINUX;
+import static com.jonnyzzz.teamcity.virtual.VMConstants.PARAMETER_VM_OS_WINDOWS;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class FormBean {
+public enum VMOS {
 
-  @NotNull
-  public String getVm() {
-    return PARAMETER_VM;
+  WINDOWS(PARAMETER_VM_OS_WINDOWS, "Windows"),
+  LINUX(PARAMETER_VM_OS_LINUX, "Linux/Unix"),
+
+  ;
+
+  private final String myName;
+  private final String myCaption;
+
+
+  VMOS(@NotNull final String name,
+       @NotNull final String caption) {
+    myName = name;
+    myCaption = caption;
   }
 
   @NotNull
-  public String getScript() {
-    return PARAMETER_SCRIPT;
+  public String getName() {
+    return myName;
   }
 
   @NotNull
-  public String getDockerImageName() {
-    return PARAMETER_DOCKER_IMAGE_NAME;
-  }
-
-  @NotNull
-  public String getVagrantFile() {
-    return PARAMETER_VAGRANT_FILE;
-  }
-
-  @NotNull
-  public Collection<VM> getVms() {
-    return Arrays.asList(VM.values());
-  }
-
-  @NotNull
-  public Collection<VMOS> getOSs() {
-    return Arrays.asList(VMOS.values());
-  }
-
-  @NotNull
-  public String getVagrantOS() {
-    return PARAMETER_VAGRANT_OS;
+  public String getCaption() {
+    return myCaption;
   }
 }
