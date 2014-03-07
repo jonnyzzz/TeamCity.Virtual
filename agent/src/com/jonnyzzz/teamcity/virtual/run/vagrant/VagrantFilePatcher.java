@@ -48,7 +48,7 @@ public class VagrantFilePatcher {
         try {
           text = FileUtil.readText(originalVagrantFile);
         } catch (IOException e) {
-          throw new RuntimeException("Failed to read original Vagranfile." + e.getMessage(), e);
+          throw new RuntimeException("Failed to read original Vagranfile. " + e.getMessage(), e);
         }
 
         final File backupFile;
