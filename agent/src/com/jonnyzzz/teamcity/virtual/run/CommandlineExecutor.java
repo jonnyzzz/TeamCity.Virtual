@@ -30,9 +30,6 @@ import java.util.Map;
 public interface CommandlineExecutor {
 
   @NotNull
-  BuildProcess commandline(@NotNull final Collection<String> arguments) throws RunBuildException;
-
-  @NotNull
   BuildProcess commandline(@NotNull final File workdir,
                            @NotNull final Collection<String> arguments) throws RunBuildException;
 

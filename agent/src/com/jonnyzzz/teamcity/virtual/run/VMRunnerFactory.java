@@ -63,12 +63,6 @@ public class VMRunnerFactory {
 
       @NotNull
       @Override
-      public BuildProcess commandline(@NotNull Collection<String> arguments) throws RunBuildException {
-        return commandline(context.getWorkingDirectory(), arguments);
-      }
-
-      @NotNull
-      @Override
       public BuildProcess commandline(@NotNull File workdir, @NotNull Collection<String> arguments) throws RunBuildException {
         return commandline(workdir, arguments, Collections.<String, String>emptyMap());
       }
