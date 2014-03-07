@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import static jetbrains.buildServer.agent.BuildFinishedStatus.FINISHED_SUCCESS;
 
@@ -59,14 +60,29 @@ public class VMRunnerFactory {
     });
 
     final CommandlineExecutor exec = new CommandlineExecutor() {
+
       @NotNull
       @Override
-      public BuildProcess commandline(@NotNull final File workdir, @NotNull final Collection<String> arguments) throws RunBuildException {
+      public BuildProcess commandline(@NotNull Collection<String> arguments) throws RunBuildException {
+        return commandline(context.getWorkingDirectory(), arguments);
+      }
+
+      @NotNull
+      @Override
+      public BuildProcess commandline(@NotNull File workdir, @NotNull Collection<String> arguments) throws RunBuildException {
+        return commandline(workdir, arguments, Collections.<String, String>emptyMap());
+      }
+
+      @NotNull
+      @Override
+      public BuildProcess commandline(@NotNull final File workdir,
+                                      @NotNull final Collection<String> arguments,
+                                      @NotNull final Map<String, String> additionalEnv) throws RunBuildException {
         return new DelegatingBuildProcess(new DelegatingBuildProcess.Action() {
           @NotNull
           @Override
           public BuildProcess startImpl() throws RunBuildException {
-            return myCmd.executeCommandLine(context, arguments, workdir, Collections.<String, String>emptyMap());
+            return myCmd.executeCommandLine(context, arguments, workdir, additionalEnv);
           }
 
           @Override

@@ -22,12 +22,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
 public interface CommandlineExecutor {
+
+  @NotNull
+  BuildProcess commandline(@NotNull final Collection<String> arguments) throws RunBuildException;
+
   @NotNull
   BuildProcess commandline(@NotNull final File workdir,
                            @NotNull final Collection<String> arguments) throws RunBuildException;
+
+  @NotNull
+  BuildProcess commandline(@NotNull final File workdir,
+                           @NotNull final Collection<String> arguments,
+                           @NotNull final Map<String, String> additionalEnv) throws RunBuildException;
 }
