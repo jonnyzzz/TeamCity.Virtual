@@ -16,7 +16,6 @@
 
 package com.jonnyzzz.teamcity.virtual.run.vagrant;
 
-import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
@@ -35,7 +34,7 @@ public class VagrantFilePatcher {
 
   public void generateVagrantFile(@NotNull final VagrantContext context,
                                   @NotNull final BuildProgressLogger logger,
-                                  @NotNull final File originalVagrantFileDir,
+                                  @NotNull final File originalVagrantFile,
                                   @NotNull final TryFinallyBuildProcess builder,
                                   @NotNull final WithGeneratedVagrantfile continuation) throws RunBuildException {
 
@@ -43,53 +42,65 @@ public class VagrantFilePatcher {
       @NotNull
       @Override
       protected BuildFinishedStatus waitForImpl() throws RunBuildException {
-        final File baseDir = createTempDir(originalVagrantFileDir);
 
-        final File vagrantFile = new File(baseDir, VMConstants.VAGRANT_FILE);
-        final File mountRoot = context.getCheckoutDirectory();
+        final String text;
+        try {
+          text = FileUtil.readText(originalVagrantFile);
+        } catch (IOException e) {
+          throw new RuntimeException("Failed to read original Vagranfile." + e.getMessage(), e);
+        }
 
-        final String relativePath = context.getRootPath() + FileUtil.getRelativePath(mountRoot, context.getWorkingDirectory());
+        final File backupFile;
+        try {
+          backupFile = FileUtil.createTempFile(context.getAgentTempDirectory(), "Vagrantfile", ".before.patch", true);
+        } catch (IOException e) {
+          throw new RuntimeException("Failed to create backup for for Vagrantfile. " + e.getMessage(), e);
+        }
 
-        final String text = generateVagrantfile(mountRoot, relativePath);
-        writeVagrantFile(vagrantFile, text);
+        try {
+          FileUtil.copy(originalVagrantFile, backupFile);
+        } catch (IOException e) {
+          throw new RuntimeException("Failed to create backup file at: " + backupFile + ". " + e.getMessage(), e);
+        }
 
         builder.addFinishProcess(new BuildProcessBase() {
           @NotNull
           @Override
           protected BuildFinishedStatus waitForImpl() throws RunBuildException {
-            FileUtil.delete(baseDir);
+            try {
+              FileUtil.copy(backupFile, originalVagrantFile);
+            } catch (IOException e) {
+              FileUtil.delete(originalVagrantFile);
+              //NOP
+            }
+            logger.message("Restored original Vagrantfile");
+            FileUtil.delete(backupFile);
             return BuildFinishedStatus.FINISHED_SUCCESS;
           }
         });
 
-        continuation.execute(vagrantFile, relativePath);
+        final File mountRoot = context.getCheckoutDirectory();
+        final String relativePath = context.getRootPath() + FileUtil.getRelativePath(mountRoot, context.getWorkingDirectory());
+
+        final String patch = generateVagrantfile(mountRoot, relativePath);
+        logger.activityStarted("generate", "Added to the end of the Vagrantfile", "vagrant");
+        logger.message(patch);
+        logger.activityFinished("generate", "vagrant");
+
+        writeVagrantFile(originalVagrantFile, text + "\n\n" + patch);
+
+        continuation.execute(relativePath);
         return BuildFinishedStatus.FINISHED_SUCCESS;
       }
 
       private void writeVagrantFile(@NotNull final File vagrantFile,
                                     @NotNull final String text) throws RunBuildException {
-        logger.activityStarted("generate", "Generated Vagrantfile", "vagrant");
-        logger.message(text);
-        logger.activityFinished("generate", "vagrant");
-
         try {
           FileUtil.writeFileAndReportErrors(vagrantFile, text);
         } catch (IOException e) {
           throw new RunBuildException("Failed to create Vargantfile. " + e.getMessage(), e);
         }
       }
-
-      @NotNull
-      private File createTempDir(@NotNull final File originalVagrantFileDir) throws RunBuildException {
-        File baseDir;
-        try {
-          baseDir = FileUtil.createTempDirectory("Vagrant", "teamcity", originalVagrantFileDir);
-        } catch (IOException e) {
-          throw new RunBuildException("Failed to create temp directory in " + originalVagrantFileDir);
-        }
-        return baseDir;
-      }
-
     });
   }
 
@@ -103,8 +114,7 @@ public class VagrantFilePatcher {
   }
 
   public interface WithGeneratedVagrantfile {
-    void execute(@NotNull final File generatedVagrantFile,
-                 @NotNull final String machinePathToWork) throws RunBuildException;
+    void execute(@NotNull final String machinePathToWork) throws RunBuildException;
   }
 
 }

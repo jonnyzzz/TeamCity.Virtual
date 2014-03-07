@@ -60,4 +60,10 @@ public class VMRunnerContext {
   public File getCheckoutDirectory() {
     return myContext.getBuild().getCheckoutDirectory();
   }
+
+  @NotNull
+  public File getAgentTempDirectory() {
+    return myContext.getBuild().getAgentTempDirectory();
+  }
+
 }

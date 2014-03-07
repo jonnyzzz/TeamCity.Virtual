@@ -31,8 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
 import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher.WithGeneratedVagrantfile;
 
@@ -80,25 +78,23 @@ public class VagrantVM implements VMRunner {
       @Override
       public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
 
-        myVagrantFilePatcher.generateVagrantFile(ctx, logger, workDir, builder, new WithGeneratedVagrantfile() {
+        myVagrantFilePatcher.generateVagrantFile(ctx, logger, vagrantFile, builder, new WithGeneratedVagrantfile() {
           @Override
-          public void execute(@NotNull final File generatedVagrantFile,
-                              @NotNull final String relativePath) throws RunBuildException {
-            final Map<String, String> extraEnv = Collections.singletonMap("VAGRANT_CWD", generatedVagrantFile.getParentFile().getPath());
+          public void execute(@NotNull final String relativePath) throws RunBuildException {
             builder.addTryProcess(
                     block(logger, "vagrant", "Starting machine",
-                            cmd.commandline(workDir, Arrays.asList("vagrant", "up"), extraEnv))
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
             );
 
             //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
             //TODO: fix windows case here ( bash => parameters ), slashes
             builder.addTryProcess(
                     block(logger, "vagrant", "Running the script",
-                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c '. " + relativePath + "/" + script.getName() + "'\""), extraEnv))
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c '. " + relativePath + "/" + script.getName() + "'\"")))
             );
 
             builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
-                    cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"), extraEnv)));
+                    cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
           }
         });
       }
