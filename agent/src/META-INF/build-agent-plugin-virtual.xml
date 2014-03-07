@@ -19,4 +19,8 @@
 
   <bean class="com.jonnyzzz.teamcity.virtual.run.ScriptFile"/>
 
+
+  <bean class="com.jonnyzzz.teamcity.virtual.run.os.OSAware"/>
+  <bean class="com.jonnyzzz.teamcity.virtual.run.os.FolderMount"/>
+
 </beans>

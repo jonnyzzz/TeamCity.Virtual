@@ -17,6 +17,7 @@
 package com.jonnyzzz.teamcity.virtual.run;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
+import com.jonnyzzz.teamcity.virtual.VMOS;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.util.FileUtil;
@@ -29,7 +30,7 @@ import java.io.File;
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VMRunnerContext {
+public abstract class VMRunnerContext {
   protected final BuildRunnerContext myContext;
 
   public VMRunnerContext(@NotNull final BuildRunnerContext context) {
@@ -65,5 +66,9 @@ public class VMRunnerContext {
   public File getAgentTempDirectory() {
     return myContext.getBuild().getAgentTempDirectory();
   }
+
+
+  @NotNull
+  public abstract VMOS getOs() throws RunBuildException;
 
 }
