@@ -41,14 +41,14 @@ public class VagrantContext extends VMRunnerContext {
       path = new File(myContext.getWorkingDirectory(), VMConstants.VAGRANT_FILE);
     } else {
       path = resolvePath(file);
-      if (path == null) throw new RunBuildException("Vagrant file '" + file + " does not exist");
+      if (path == null) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
 
       if (path.isDirectory()) {
         path = new File(path, VMConstants.VAGRANT_FILE);
       }
     }
 
-    if (!path.isFile()) throw new RunBuildException("Vagrant file '" + file + " does not exist");
+    if (!path.isFile()) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
     return path;
   }
 
