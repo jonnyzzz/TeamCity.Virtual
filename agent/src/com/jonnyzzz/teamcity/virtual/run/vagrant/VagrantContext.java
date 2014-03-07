@@ -20,6 +20,7 @@ import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.VMRunnerContext;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
+import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -37,8 +38,8 @@ public class VagrantContext extends VMRunnerContext {
     String file = myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANT_FILE);
 
     File path;
-    if (file == null) {
-      path = new File(myContext.getWorkingDirectory(), VMConstants.VAGRANT_FILE);
+    if (StringUtil.isEmptyOrSpaces(file)) {
+      path = new File(myContext.getBuild().getCheckoutDirectory(), VMConstants.VAGRANT_FILE);
     } else {
       path = resolvePath(file);
       if (path == null) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
