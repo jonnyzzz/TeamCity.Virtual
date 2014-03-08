@@ -67,7 +67,6 @@ public class DockerVM implements VMRunner {
         builder.addTryProcess(cmd.commandline(
                 workDir,
                 Arrays.asList(
-                        "sudo",
                         "docker",
                         "run",
                         "--rm=true",
