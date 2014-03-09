@@ -33,19 +33,30 @@
 
 <l:settingsGroup title="Commands to Execute">
   <tr>
+    <th>&nbsp;</th>
+    <td>
+      <span class="smallNote">
+        Virtual environment is started with
+        the <em>build checkout directory <bs:help file="Build+Checkout+Directory"/></em> mounted for read/write into the virtual environment.
+        <br />
+        The <em>working directory path</em> and the <em>build checkout directory path</em> are automatically mapped into virtual environment paths.
+        <br/>
+        The virtual environment is destroyed after execution is completed
+      </span>
+    </td>
+  </tr>
+  <tr>
     <th>Command:</th>
     <td>
       <props:multilineProperty name="${ctx.script}" linkTitle="Script to run in the VM" cols="49" rows="8" expanded="${true}"/>
       <span class="error" id="error:${ctx.script}"></span>
       <span class="smallNote">
-        Build <em>checkout directory</em> is mounted for read/write into the virtual environment
-        <br />
-        The build script from the the <em>working directory</em> in the virtual environment
+        Commands to be executed in the virtual environment in the <em>working directory</em>
       </span>
     </td>
   </tr>
 
-  <tr class="advancedSetting">
+  <tr>
     <th>
       <label for="${ctx.workingDirectory}">Working directory: <bs:help file="Build+Working+Directory" /></label>
     </th>
@@ -56,7 +67,6 @@
         The <em>relative path</em> to the <em>build checkout directory <bs:help file="Build+Checkout+Directory"/></em>
         to run the script in the virtual environment
         <br/>
-        The <em>working directory path</em> and the <em>build checkout directory path</em> are automatically mapped into virtual environment paths
       </span>
     </td>
   </tr>
