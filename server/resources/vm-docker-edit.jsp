@@ -22,5 +22,13 @@
   <td>
     <props:textProperty name="${ctx.dockerImageName}" className="longField"/>
     <span class="error" id="error:${ctx.dockerImageName}"></span>
+    <span class="smallNote">
+      Use one of the following formats: <br />
+      <strong>TRUSTED_IMAGE_NAME</strong> for trusted images,
+      <br/>
+      <strong>USERNAME/IMAGES_NAME</strong> for public images,
+      <br/>
+      <strong>private.repository:5000/IMAGE_NAME[:TAG]</strong> for private hosted images
+    </span>
   </td>
 </tr>
