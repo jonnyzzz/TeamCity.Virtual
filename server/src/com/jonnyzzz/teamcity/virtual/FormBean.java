@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual;
 
+import jetbrains.buildServer.agent.AgentRuntimeProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -46,6 +47,11 @@ public class FormBean {
   @NotNull
   public String getVagrantFile() {
     return PARAMETER_VAGRANT_FILE;
+  }
+
+  @NotNull
+  public String getWorkingDirectory() {
+    return AgentRuntimeProperties.BUILD_WORKING_DIR;
   }
 
   @NotNull

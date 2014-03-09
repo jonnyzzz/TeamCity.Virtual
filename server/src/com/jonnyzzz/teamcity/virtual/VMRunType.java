@@ -48,13 +48,13 @@ public class VMRunType extends RunType {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Docker/Vagrant";
+    return "Docker / Vagrant";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "Runs a command under virtual machine";
+    return "Runs a command under the specified virtual environment";
   }
 
   @Nullable
