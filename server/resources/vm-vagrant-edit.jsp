@@ -21,5 +21,9 @@
   <td>
     <props:textProperty name="${ctx.vagrantFile}" className="longField"/>
     <span class="error" id="error:${ctx.vagrantFile}"></span>
+    <span class="smallNote">
+      Relative path from the <em>build checkout directory <bs:help file="Build+Checkout+Directory"/></em>
+      to the directory where <em>Vagrantfile</em> is located
+    </span>
   </td>
 </tr>

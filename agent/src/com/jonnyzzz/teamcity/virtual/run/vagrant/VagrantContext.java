@@ -46,6 +46,8 @@ public class VagrantContext extends VMRunnerContext {
 
       if (path.isDirectory()) {
         path = new File(path, VMConstants.VAGRANT_FILE);
+      } else if (!path.getName().equals(VMConstants.VAGRANT_FILE)) {
+        throw new RunBuildException("File '" + file + "' must be named as " + VMConstants.VAGRANT_FILE);
       }
     }
 
