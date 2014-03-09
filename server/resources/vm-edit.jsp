@@ -21,6 +21,7 @@
   <span class="smallNote">Select the <em>virtual environment</em> to use</span>
 </c:set>
 
+<l:settingsGroup title="Virtual Environment">
 <props:selectSectionProperty name="${ctx.vm}" title="Virtualization" note="${note}">
   <c:forEach var="it" items="${ctx.vms}">
     <props:selectSectionPropertyContent value="${it.name}" caption="${it.caption}">
@@ -28,7 +29,9 @@
     </props:selectSectionPropertyContent>
   </c:forEach>
 </props:selectSectionProperty>
+</l:settingsGroup>
 
+<l:settingsGroup title="Commands to execute">
 <tr>
   <th>Command:</th>
   <td>
@@ -57,4 +60,4 @@
     </span>
   </td>
 </tr>
-
+</l:settingsGroup>
