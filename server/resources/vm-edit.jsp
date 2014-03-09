@@ -31,7 +31,7 @@
   </props:selectSectionProperty>
 </l:settingsGroup>
 
-<l:settingsGroup title="Commands to execute">
+<l:settingsGroup title="Commands to Execute">
   <tr>
     <th>Command:</th>
     <td>
