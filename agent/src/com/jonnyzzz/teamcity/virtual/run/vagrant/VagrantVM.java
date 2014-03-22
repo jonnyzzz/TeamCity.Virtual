@@ -17,6 +17,7 @@
 package com.jonnyzzz.teamcity.virtual.run.vagrant;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
+import com.jonnyzzz.teamcity.virtual.run.CommandLineUtils;
 import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
 import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
 import com.jonnyzzz.teamcity.virtual.run.VMRunner;
@@ -30,8 +31,11 @@ import jetbrains.buildServer.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import static com.jonnyzzz.teamcity.virtual.VMConstants.PARAMETER_VAGRANT_CUSTOM_COMMANDLINE;
 import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher.WithGeneratedVagrantfile;
 
 /**
@@ -81,9 +85,14 @@ public class VagrantVM implements VMRunner {
         myVagrantFilePatcher.generateVagrantFile(ctx, logger, vagrantFile, builder, new WithGeneratedVagrantfile() {
           @Override
           public void execute(@NotNull final String relativePath) throws RunBuildException {
+            final List<String> arguments = new ArrayList<>();
+            arguments.addAll(Arrays.asList("vagrant", "up"));
+
+            arguments.addAll(CommandLineUtils.additionalCommands(context.getRunnerParameters().get(PARAMETER_VAGRANT_CUSTOM_COMMANDLINE)));
+
             builder.addTryProcess(
                     block(logger, "vagrant", "Starting machine",
-                            cmd.commandline(workDir, Arrays.asList("vagrant", "up")))
+                            cmd.commandline(workDir, arguments))
             );
 
             //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
