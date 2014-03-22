@@ -17,22 +17,18 @@
 package com.jonnyzzz.teamcity.virtual.run.docker;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
-import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
-import com.jonnyzzz.teamcity.virtual.run.RelativePaths;
-import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
-import com.jonnyzzz.teamcity.virtual.run.VMRunner;
+import com.jonnyzzz.teamcity.virtual.run.*;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
-import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import static com.jonnyzzz.teamcity.virtual.run.CommandLineUtils.additionalCommands;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
@@ -100,18 +96,4 @@ public class DockerVM implements VMRunner {
       /*docker run --rm=true -v /home/shalupov/work/ui:/work:rw -i -t dockerfile/nodejs bash -c "cd /work && npm install && npm install grunt-cli && ./node_modules/.bin/grunt release"*/
   }
 
-  @NotNull
-  private List<String> additionalCommands(@Nullable final String text) {
-    if (StringUtil.isEmptyOrSpaces(text)) return Collections.emptyList();
-
-    final List<String> result = new ArrayList<>();
-    for (String s : text.split("[\\r\\n]+")) {
-      final String arg = s.trim();
-      if (arg.length() == 0) continue;
-
-      result.addAll(StringUtil.splitHonorQuotes(arg));
-    }
-
-    return result;
-  }
 }
