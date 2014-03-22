@@ -58,7 +58,7 @@
 
   <tr>
     <th>
-      <label for="${ctx.workingDirectory}">Working directory: <bs:help file="Build+Working+Directory" /></label>
+      <label for="${ctx.workingDirectory}">Working Directory: <bs:help file="Build+Working+Directory" /></label>
     </th>
     <td>
       <props:textProperty name="${ctx.workingDirectory}"  className="longField"/>
