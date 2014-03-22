@@ -85,24 +85,34 @@ public class VagrantVM implements VMRunner {
         myVagrantFilePatcher.generateVagrantFile(ctx, logger, vagrantFile, builder, new WithGeneratedVagrantfile() {
           @Override
           public void execute(@NotNull final String relativePath) throws RunBuildException {
-            final List<String> arguments = new ArrayList<>();
-            arguments.addAll(Arrays.asList("vagrant", "up"));
+            up();
+            ssh(relativePath);
+            destroy();
+          }
 
-            arguments.addAll(CommandLineUtils.additionalCommands(context.getRunnerParameters().get(PARAMETER_VAGRANT_CUSTOM_COMMANDLINE)));
+          private void up() throws RunBuildException {
+            final List<String> upArguments = new ArrayList<>();
+            upArguments.addAll(Arrays.asList("vagrant", "up"));
+            upArguments.addAll(CommandLineUtils.additionalCommands(context.getRunnerParameters().get(PARAMETER_VAGRANT_CUSTOM_COMMANDLINE)));
 
             builder.addTryProcess(
                     block(logger, "vagrant", "Starting machine",
-                            cmd.commandline(workDir, arguments))
+                            cmd.commandline(workDir, upArguments))
             );
+          }
 
+          private void ssh(String relativePath) throws RunBuildException {
             //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
             //TODO: fix windows case here ( bash => parameters ), slashes
             builder.addTryProcess(
                     block(logger, "vagrant", "Running the script",
                             cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c 'cd " + relativePath + " && . " + script.getName() + "'\"")))
             );
+          }
 
-            builder.addFinishProcess(block(logger, "vagrant", "Destroying machine",
+          private void destroy() throws RunBuildException {
+            builder.addFinishProcess(
+                    block(logger, "vagrant", "Destroying machine",
                     cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
           }
         });
