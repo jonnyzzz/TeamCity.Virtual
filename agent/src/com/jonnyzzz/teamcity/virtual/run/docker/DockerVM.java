@@ -24,10 +24,14 @@ import com.jonnyzzz.teamcity.virtual.run.VMRunner;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
+import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,7 +69,9 @@ public class DockerVM implements VMRunner {
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
       public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
-        final List<String> arguments = Arrays.asList(
+        final List<String> arguments = new ArrayList<>();
+
+        arguments.addAll(Arrays.asList(
                 "docker",
                 "run",
                 "--rm=true",
@@ -74,12 +80,15 @@ public class DockerVM implements VMRunner {
                 "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
                 "--interactive=false",
                 "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
-                "--tty=false",
+                "--tty=false"));
+
+        arguments.addAll(additionalCommands(context.getRunnerParameters().get(VMConstants.PARAMETER_DOCKER_CUSTOM_COMMANDLINE)));
+        arguments.addAll(Arrays.asList(
                 ctx.getImageName(),
                 "/bin/bash",  ///TODO: imagine OS without bash
                 "-c",
                 "\"source " + script.getName() + "\""
-        );
+        ));
 
         builder.addTryProcess(cmd.commandline(
                 workDir,
@@ -89,5 +98,20 @@ public class DockerVM implements VMRunner {
     });
 
       /*docker run --rm=true -v /home/shalupov/work/ui:/work:rw -i -t dockerfile/nodejs bash -c "cd /work && npm install && npm install grunt-cli && ./node_modules/.bin/grunt release"*/
+  }
+
+  @NotNull
+  private List<String> additionalCommands(@Nullable final String text) {
+    if (StringUtil.isEmptyOrSpaces(text)) return Collections.emptyList();
+
+    final List<String> result = new ArrayList<>();
+    for (String s : text.split("[\\r\\n]+")) {
+      final String arg = s.trim();
+      if (arg.length() == 0) continue;
+
+      result.addAll(StringUtil.splitHonorQuotes(arg));
+    }
+
+    return result;
   }
 }
