@@ -32,3 +32,12 @@
     </span>
   </td>
 </tr>
+
+<tr class="advancedSetting">
+  <th><label for="${ctx.dockerCustomCommandLine}">Additional Docker Parameters:</label></th>
+  <td>
+    <props:multilineProperty name="${ctx.dockerCustomCommandLine}" linkTitle="Docker Parameters" cols="49" rows="3" expanded="${true}"/>
+    <span class="smallNote">Additional commandline parameters to the <em>docker run</em> command. Write each parameter on a new line</span>
+    <span id="error_${ctx.dockerCustomCommandLine}" class="error"></span>
+  </td>
+</tr>

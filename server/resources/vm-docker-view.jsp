@@ -20,3 +20,7 @@
 <div class="parameter">
   Image: <strong><props:displayValue name="${ctx.dockerImageName}"/></strong>
 </div>
+
+<div class="parameter">
+  Additional Docker Parameters: <strong><props:displayValue name="${ctx.dockerCustomCommandLine}" /></strong>
+</div>
