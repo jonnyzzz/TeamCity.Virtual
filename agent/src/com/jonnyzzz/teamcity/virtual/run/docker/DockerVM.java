@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
@@ -64,23 +65,25 @@ public class DockerVM implements VMRunner {
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
       public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
+        final List<String> arguments = Arrays.asList(
+                "docker",
+                "run",
+                "--rm=true",
+                "-v",
+                baseDir.getPath() + ":/jonnyzzz:rw",
+                "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
+                "--interactive=false",
+                "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
+                "--tty=false",
+                ctx.getImageName(),
+                "/bin/bash",  ///TODO: imagine OS without bash
+                "-c",
+                "\"source " + script.getName() + "\""
+        );
+
         builder.addTryProcess(cmd.commandline(
                 workDir,
-                Arrays.asList(
-                        "docker",
-                        "run",
-                        "--rm=true",
-                        "-v",
-                        baseDir.getPath() + ":/jonnyzzz:rw",
-                        "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
-                        "--interactive=false",
-                        "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
-                        "--tty=false",
-                        ctx.getImageName(),
-                        "/bin/bash",  ///TODO: imagine OS without bash
-                        "-c",
-                        "\"source " + script.getName() + "\""
-                )
+                arguments
         ));
       }
     });
