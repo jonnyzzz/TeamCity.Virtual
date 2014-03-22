@@ -34,6 +34,7 @@ public class VMConstants {
   public static final String PARAMETER_DOCKER_CUSTOM_COMMANDLINE = "docker-commandline";
 
   public static final String PARAMETER_VAGRANT_FILE = "vagrant-file";
+  public static final String PARAMETER_VAGRANT_CUSTOM_COMMANDLINE = "vagrant-commandline";
 
   public static final String VAGRANT_FILE = "Vagrantfile";
 }

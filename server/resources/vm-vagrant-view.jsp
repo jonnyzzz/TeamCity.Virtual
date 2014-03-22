@@ -20,3 +20,7 @@
 <div class="parameter">
   Image: <strong><props:displayValue name="${ctx.vagrantFile}"/></strong>
 </div>
+
+<div class="parameter">
+  Additional Vagrant Parameters: <strong><props:displayValue name="${ctx.vagrantCustomCommandLine}" /></strong>
+</div>

@@ -48,10 +48,15 @@ public class FormBean {
   public String getDockerCustomCommandLine() {
     return PARAMETER_DOCKER_CUSTOM_COMMANDLINE;
   }
-  
+
   @NotNull
   public String getVagrantFile() {
     return PARAMETER_VAGRANT_FILE;
+  }
+
+  @NotNull
+  public String getVagrantCustomCommandLine() {
+    return PARAMETER_VAGRANT_CUSTOM_COMMANDLINE;
   }
 
   @NotNull
