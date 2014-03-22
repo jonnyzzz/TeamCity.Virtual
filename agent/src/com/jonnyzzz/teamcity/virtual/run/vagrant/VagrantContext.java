@@ -40,6 +40,8 @@ public class VagrantContext extends VMRunnerContext {
     File path;
     if (StringUtil.isEmptyOrSpaces(file)) {
       path = new File(myContext.getBuild().getCheckoutDirectory(), VMConstants.VAGRANT_FILE);
+      if (!path.isFile()) throw new RunBuildException(VMConstants.VAGRANT_FILE + " is not found at " + getCheckoutDirectory());
+
     } else {
       path = resolvePath(file);
       if (path == null) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
