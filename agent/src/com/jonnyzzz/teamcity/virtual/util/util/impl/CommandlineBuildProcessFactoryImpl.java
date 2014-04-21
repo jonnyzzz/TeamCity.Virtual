@@ -60,7 +60,7 @@ public class CommandlineBuildProcessFactoryImpl implements CommandlineBuildProce
     final List<String> newArgz = new ArrayList<>(argz);
     final String commandLine = joinCommandLineArguments(newArgz);
 
-    hostContext.getBuild().getBuildLogger().message("Executing command:" + commandLine);
+    hostContext.getBuild().getBuildLogger().message("Executing command: " + commandLine);
 
     context.addRunnerParameter(SimpleRunnerConstants.USE_CUSTOM_SCRIPT, "true");
     context.addRunnerParameter(SimpleRunnerConstants.SCRIPT_CONTENT, commandLine);
