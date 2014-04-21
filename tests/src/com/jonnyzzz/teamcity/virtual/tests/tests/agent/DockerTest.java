@@ -21,6 +21,7 @@ import com.jonnyzzz.teamcity.virtual.VMRunner;
 import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
 import com.jonnyzzz.teamcity.virtual.run.VMRunnerFactory;
 import com.jonnyzzz.teamcity.virtual.run.docker.DockerVM;
+import com.jonnyzzz.teamcity.virtual.run.docker.UserUIDAndGID;
 import com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher;
 import com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantVM;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
@@ -32,6 +33,7 @@ import jetbrains.buildServer.util.FileUtil;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.testng.annotations.Test;
@@ -59,7 +61,19 @@ public class DockerTest extends BaseTestCase {
 
     final VMRunner run = new VMRunner(new VMRunnerFactory(
             new com.jonnyzzz.teamcity.virtual.run.VMRunner[]{
-                    new DockerVM(new ScriptFile()),
+                    new DockerVM(new ScriptFile(), new UserUIDAndGID() {
+                      @Nullable
+                      @Override
+                      public String getUID() {
+                        return "SID";
+                      }
+
+                      @Nullable
+                      @Override
+                      public String getGID() {
+                        return "GID";
+                      }
+                    }),
                     new VagrantVM(new ScriptFile(), new VagrantFilePatcher())
             }, new CommandlineBuildProcessFactory() {
       @NotNull
@@ -68,8 +82,18 @@ public class DockerTest extends BaseTestCase {
                                              @NotNull Collection<String> argz,
                                              @NotNull File workingDir,
                                              @NotNull Map<String, String> additionalEnvironment) throws RunBuildException {
-        System.out.println("cmd>> " + argz);
-        return cmd.executeCommandLine(hostContext, argz, workingDir, additionalEnvironment);
+        final List<String> processed = new ArrayList<>();
+        for (String arg : argz) {
+          processed.add(
+                  arg
+                          .replace(home.getPath(), "!HOME!")
+                          .replace(work.getPath(), "!WORK!")
+                          .replace(FileUtil.getRelativePath(home, work), "!REL_WORK!")
+          );
+        }
+
+        System.out.println("cmd>> " + processed);
+        return cmd.executeCommandLine(hostContext, processed, workingDir, additionalEnvironment);
       }
     }
     ));
@@ -115,7 +139,7 @@ public class DockerTest extends BaseTestCase {
     private DoDockerTest expectCommand(@NotNull final BaseMatcher<Collection<String>> argz) throws RunBuildException {
       m.checking(new Expectations() {{
         //noinspection unchecked
-        allowing(cmd).executeCommandLine(
+        oneOf(cmd).executeCommandLine(
                 with(any(BuildRunnerContext.class)),
                 with(argz),
                 with(equal(work)),
@@ -139,16 +163,7 @@ public class DockerTest extends BaseTestCase {
         @Override
         public boolean matches(Object item) {
           //noinspection unchecked
-          final List<String> actual = (List<String>) item;
-
-          List<String> processed = new ArrayList<>();
-          for (String arg : actual) {
-            processed.add(
-                    arg.replace(home.getPath(), "!HOME!")
-                       .replace(work.getPath(), "!WORK!")
-                       .replace(FileUtil.getRelativePath(home, work), "!REL_WORK!")
-            );
-          }
+          final List<String> processed = (List<String>) item;
 
           if (processed.equals(new ArrayList<>(Arrays.asList(argz)))) {
             return true;
@@ -171,17 +186,7 @@ public class DockerTest extends BaseTestCase {
         @Override
         public boolean matches(Object item) {
           //noinspection unchecked
-          final List<String> actual = (List<String>) item;
-
-          List<String> processed = new ArrayList<>();
-          for (String arg : actual) {
-            processed.add(
-                    arg
-                            .replace(home.getPath(), "!HOME!")
-                            .replace(work.getPath(), "!WORK!")
-                            .replace(FileUtil.getRelativePath(home, work), "!REL_WORK!")
-            );
-          }
+          final List<String> processed = (List<String>) item;
 
           for (int i = 0; i < argz.length; i++) {
             String s = argz[i];
@@ -207,6 +212,8 @@ public class DockerTest extends BaseTestCase {
       final BuildProcess process = run.createBuildProcess(build, context);
       process.start();
       process.waitFor();
+
+      m.assertIsSatisfied();
     }
 
     public void setupRunnerParameters() {
@@ -223,6 +230,7 @@ public class DockerTest extends BaseTestCase {
             .expectExactCall("docker", "pull", "image")
             .expectStartsWith("docker", "run")
             .expectStartsWith("docker", "kill")
+            .expectStartsWith("docker", "run")
             .test();
   }
 

@@ -18,8 +18,13 @@ package com.jonnyzzz.teamcity.virtual.run.docker;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.*;
+import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
+import com.jonnyzzz.teamcity.virtual.util.util.CompositeBuildProcess;
+import com.jonnyzzz.teamcity.virtual.util.util.DelegatingBuildProcess;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
+import com.jonnyzzz.teamcity.virtual.util.util.impl.CompositeBuildProcessImpl;
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.BuildFinishedStatus;
 import jetbrains.buildServer.agent.BuildProcess;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.agent.BuildRunnerContext;
@@ -38,9 +43,12 @@ import static com.jonnyzzz.teamcity.virtual.run.CommandLineUtils.additionalComma
  */
 public class DockerVM extends BaseVM implements VMRunner {
   private final ScriptFile myScriptFile;
+  private final UserUIDAndGID mySidAndGid;
 
-  public DockerVM(@NotNull final ScriptFile scriptFile) {
+  public DockerVM(@NotNull final ScriptFile scriptFile,
+                  @NotNull final UserUIDAndGID sidAndGid) {
     myScriptFile = scriptFile;
+    mySidAndGid = sidAndGid;
   }
 
   @NotNull
@@ -85,6 +93,33 @@ public class DockerVM extends BaseVM implements VMRunner {
                 ))
         );
         builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
+
+        builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
+          @NotNull
+          @Override
+          public BuildProcess startImpl() throws RunBuildException {
+            final CompositeBuildProcess bp = new CompositeBuildProcessImpl();
+
+            final String uid = mySidAndGid.getUID();
+            final String gid = mySidAndGid.getGID();
+
+            if (StringUtil.isEmptyOrSpaces(uid) || StringUtil.isEmptyOrSpaces(gid)) {
+              logger.warning("SID and GID of current user were not found. chown is skipped");
+              return NOP;
+            }
+
+            bp.pushBuildProcess(cmd.commandline(workDir, dockerRun(
+                    name + "S",
+                    Arrays.<String>asList(),
+                    Arrays.asList(
+                            "/bin/bash",                           //TODO: bash
+                            "-c",
+                            "chown -R " + uid + ":" + gid + " ."
+                    ))));
+
+            return bp;
+          }
+        })));
       }
 
       @NotNull
@@ -129,5 +164,14 @@ public class DockerVM extends BaseVM implements VMRunner {
       }
     });
   }
+
+
+  private static final BuildProcess NOP = new BuildProcessBase() {
+    @NotNull
+    @Override
+    protected BuildFinishedStatus waitForImpl() throws RunBuildException {
+      return BuildFinishedStatus.FINISHED_SUCCESS;
+    }
+  };
 
 }
