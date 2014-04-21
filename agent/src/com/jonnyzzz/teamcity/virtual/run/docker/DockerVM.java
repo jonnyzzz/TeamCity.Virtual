@@ -81,16 +81,25 @@ public class DockerVM extends BaseVM implements VMRunner {
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
                         workDir,
-                        dockerRun(script, name, additionalCommands)
+                        dockerRun(name, additionalCommands, scriptRun(script))
                 ))
         );
         builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
       }
 
       @NotNull
-      private List<String> dockerRun(@NotNull final File script,
-                                     @NotNull final String name,
-                                     @NotNull final List<String> additionalCommands) throws RunBuildException {
+      private List<String> scriptRun(@NotNull final File script) {
+        return Arrays.asList(
+                "/bin/bash",  ///TODO: imagine OS without bash
+                "-c",
+                "\"source " + script.getName() + "\""
+        );
+      }
+
+      @NotNull
+      private List<String> dockerRun(@NotNull final String name,
+                                     @NotNull final List<String> dockerArgs,
+                                     @NotNull final List<String> command) throws RunBuildException {
         final List<String> arguments = new ArrayList<>();
 
         arguments.addAll(Arrays.asList(
@@ -104,13 +113,11 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--interactive=false",
                 "--tty=false"));
 
-        arguments.addAll(additionalCommands);
-        arguments.addAll(Arrays.asList(
-                ctx.getImageName(),
-                "/bin/bash",  ///TODO: imagine OS without bash
-                "-c",
-                "\"source " + script.getName() + "\""
-        ));
+        arguments.addAll(dockerArgs);
+
+        arguments.add(ctx.getImageName());
+
+        arguments.addAll(command);
 
         return arguments;
       }
