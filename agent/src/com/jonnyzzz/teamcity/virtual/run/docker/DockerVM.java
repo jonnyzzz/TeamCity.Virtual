@@ -71,32 +71,19 @@ public class DockerVM extends BaseVM implements VMRunner {
       public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
 
         builder.addTryProcess(
-                block("Pulling the image",
-                cmd.commandline(
-                workDir,
-                dockerPull()
-        )));
+                block("Pulling the image", cmd.commandline(
+                        workDir, Arrays.asList("docker", "pull", ctx.getImageName())
+                ))
+        );
 
         final String name = "teamcity_" + StringUtil.generateUniqueHash();
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
-                workDir,
-                dockerRun(script, name)
-        )));
+                        workDir,
+                        dockerRun(script, name)
+                ))
+        );
         builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
-      }
-
-      @NotNull
-      private List<String> dockerPull() throws RunBuildException {
-        final List<String> arguments = new ArrayList<>();
-
-        arguments.addAll(Arrays.asList(
-                "docker",
-                "pull",
-                ctx.getImageName()
-        ));
-
-        return arguments;
       }
 
       @NotNull
