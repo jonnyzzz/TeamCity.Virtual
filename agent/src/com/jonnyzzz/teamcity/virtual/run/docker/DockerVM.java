@@ -69,6 +69,8 @@ public class DockerVM extends BaseVM implements VMRunner {
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
       public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
+        final String name = "teamcity_" + StringUtil.generateUniqueHash();
+        final List<String> additionalCommands = additionalCommands(context.getRunnerParameters().get(VMConstants.PARAMETER_DOCKER_CUSTOM_COMMANDLINE));
 
         builder.addTryProcess(
                 block("Pulling the image", cmd.commandline(
@@ -76,18 +78,19 @@ public class DockerVM extends BaseVM implements VMRunner {
                 ))
         );
 
-        final String name = "teamcity_" + StringUtil.generateUniqueHash();
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
                         workDir,
-                        dockerRun(script, name)
+                        dockerRun(script, name, additionalCommands)
                 ))
         );
         builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
       }
 
       @NotNull
-      private List<String> dockerRun(@NotNull final File script, @NotNull final String name) throws RunBuildException {
+      private List<String> dockerRun(@NotNull final File script,
+                                     @NotNull final String name,
+                                     @NotNull final List<String> additionalCommands) throws RunBuildException {
         final List<String> arguments = new ArrayList<>();
 
         arguments.addAll(Arrays.asList(
@@ -101,7 +104,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--interactive=false",
                 "--tty=false"));
 
-        arguments.addAll(additionalCommands(context.getRunnerParameters().get(VMConstants.PARAMETER_DOCKER_CUSTOM_COMMANDLINE)));
+        arguments.addAll(additionalCommands);
         arguments.addAll(Arrays.asList(
                 ctx.getImageName(),
                 "/bin/bash",  ///TODO: imagine OS without bash
