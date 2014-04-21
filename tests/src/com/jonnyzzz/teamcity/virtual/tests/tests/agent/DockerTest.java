@@ -222,6 +222,7 @@ public class DockerTest extends BaseTestCase {
     new DoDockerTest()
             .expectExactCall("docker", "pull", "image")
             .expectStartsWith("docker", "run")
+            .expectStartsWith("docker", "kill")
             .test();
   }
 

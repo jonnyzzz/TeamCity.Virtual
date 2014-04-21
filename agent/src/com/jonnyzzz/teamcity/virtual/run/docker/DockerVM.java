@@ -23,6 +23,7 @@ import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProcess;
 import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.agent.BuildRunnerContext;
+import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -67,7 +68,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
-      public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
+      public void buildWithScriptFile(@NotNull final File script) throws RunBuildException {
 
         builder.addTryProcess(
                 block("Pulling the image",
@@ -76,11 +77,13 @@ public class DockerVM extends BaseVM implements VMRunner {
                 dockerPull()
         )));
 
+        final String name = "teamcity_" + StringUtil.generateUniqueHash();
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
                 workDir,
-                dockerRun(script)
+                dockerRun(script, name)
         )));
+        builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
       }
 
       @NotNull
@@ -97,13 +100,14 @@ public class DockerVM extends BaseVM implements VMRunner {
       }
 
       @NotNull
-      private List<String> dockerRun(@NotNull final File script) throws RunBuildException {
+      private List<String> dockerRun(@NotNull final File script, @NotNull final String name) throws RunBuildException {
         final List<String> arguments = new ArrayList<>();
 
         arguments.addAll(Arrays.asList(
                 "docker",
                 "run",
                 "--rm=true",
+                "--name=" + name,
                 "-v",
                 baseDir.getPath() + ":/jonnyzzz:rw",
                 "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
