@@ -72,7 +72,6 @@ public class VMRunnerFactory {
       }
 
       @NotNull
-      @Override
       public BuildProcess commandline(@NotNull final File workdir,
                                       @NotNull final Collection<String> arguments,
                                       @NotNull final Map<String, String> additionalEnv) throws RunBuildException {
