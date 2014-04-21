@@ -90,6 +90,9 @@ public class DockerTest extends BaseTestCase {
         allowing(context).getWorkingDirectory();
         will(returnValue(work));
 
+        allowing(build).getFailBuildOnExitCode();
+        will(returnValue(true));
+
         allowing(logger).message(with(any(String.class)));
         allowing(logger).activityStarted(with(any(String.class)), with(any(String.class)), with(any(String.class)));
         allowing(logger).activityFinished(with(any(String.class)), with(any(String.class)));
