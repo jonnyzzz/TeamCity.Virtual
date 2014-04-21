@@ -63,4 +63,11 @@ public class DelegatingBuildProcess extends BuildProcessBase {
     BuildProcess startImpl() throws RunBuildException;
     void finishedImpl();
   }
+
+  public static abstract class ActionAdapter implements Action {
+    @Override
+    public void finishedImpl() {
+      //NOP
+    }
+  }
 }
