@@ -17,11 +17,7 @@
 package com.jonnyzzz.teamcity.virtual.run.vagrant;
 
 import com.jonnyzzz.teamcity.virtual.VMConstants;
-import com.jonnyzzz.teamcity.virtual.run.CommandLineUtils;
-import com.jonnyzzz.teamcity.virtual.run.CommandlineExecutor;
-import com.jonnyzzz.teamcity.virtual.run.ScriptFile;
-import com.jonnyzzz.teamcity.virtual.run.VMRunner;
-import com.jonnyzzz.teamcity.virtual.util.util.DelegatingBuildProcess;
+import com.jonnyzzz.teamcity.virtual.run.*;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildProcess;
@@ -41,7 +37,7 @@ import static com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher.WithG
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class VagrantVM implements VMRunner {
+public class VagrantVM extends BaseVM implements VMRunner {
   private final ScriptFile myScriptFile;
   private final VagrantFilePatcher myVagrantFilePatcher;
 
@@ -96,7 +92,7 @@ public class VagrantVM implements VMRunner {
             upArguments.addAll(CommandLineUtils.additionalCommands(context.getRunnerParameters().get(PARAMETER_VAGRANT_CUSTOM_COMMANDLINE)));
 
             builder.addTryProcess(
-                    block(logger, "vagrant", "Starting machine",
+                    block("Starting machine",
                             cmd.commandline(workDir, upArguments))
             );
           }
@@ -105,39 +101,28 @@ public class VagrantVM implements VMRunner {
             //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
             //TODO: fix windows case here ( bash => parameters ), slashes
             builder.addTryProcess(
-                    block(logger, "vagrant", "Running the script",
+                    block("Running the script",
                             cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c 'cd " + relativePath + " && . " + script.getName() + "'\"")))
             );
           }
 
           private void destroy() throws RunBuildException {
             builder.addFinishProcess(
-                    block(logger, "vagrant", "Destroying machine",
-                    cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f"))));
+                    block("Destroying machine",
+                            cmd.commandline(workDir, Arrays.asList("vagrant", "destroy", "-f")))
+            );
           }
+
+          @NotNull
+          private BuildProcess block(@NotNull final String blockText,
+                                     @NotNull final BuildProcess proc) {
+            return BaseVM.block(logger, "vagrant", blockText, proc);
+          }
+
         });
       }
     });
   }
 
 
-  @NotNull
-  private BuildProcess block(@NotNull final BuildProgressLogger logger,
-                             @NotNull final String blockName,
-                             @NotNull final String blockText,
-                             @NotNull final BuildProcess proc) {
-    return new DelegatingBuildProcess(new DelegatingBuildProcess.Action() {
-      @NotNull
-      @Override
-      public BuildProcess startImpl() throws RunBuildException {
-        logger.activityStarted(blockName, blockText, "vm");
-        return proc;
-      }
-
-      @Override
-      public void finishedImpl() {
-        logger.activityFinished(blockName, "vm");
-      }
-    });
-  }
 }
