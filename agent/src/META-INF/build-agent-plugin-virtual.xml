@@ -10,6 +10,7 @@
   <bean class="com.jonnyzzz.teamcity.virtual.VMRunner"/>
   <bean class="com.jonnyzzz.teamcity.virtual.run.VMRunnerFactory"/>
 
+  <bean class="com.jonnyzzz.teamcity.virtual.run.docker.UserUIDAndGIDImpl"/>
   <bean class="com.jonnyzzz.teamcity.virtual.run.docker.DockerVM"/>
   <bean class="com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantVM"/>
   <bean class="com.jonnyzzz.teamcity.virtual.run.vagrant.VagrantFilePatcher"/>
