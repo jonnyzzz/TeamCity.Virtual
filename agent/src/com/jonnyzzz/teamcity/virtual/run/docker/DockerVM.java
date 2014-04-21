@@ -108,7 +108,6 @@ public class DockerVM extends BaseVM implements VMRunner {
                 baseDir.getPath() + ":/jonnyzzz:rw",
                 "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
                 "--interactive=false",
-                "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
                 "--tty=false"));
 
         arguments.addAll(additionalCommands(context.getRunnerParameters().get(VMConstants.PARAMETER_DOCKER_CUSTOM_COMMANDLINE)));
