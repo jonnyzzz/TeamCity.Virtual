@@ -20,6 +20,8 @@ import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.*;
 import com.jonnyzzz.teamcity.virtual.util.util.TryFinallyBuildProcess;
 import jetbrains.buildServer.RunBuildException;
+import jetbrains.buildServer.agent.BuildProcess;
+import jetbrains.buildServer.agent.BuildProgressLogger;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +35,7 @@ import static com.jonnyzzz.teamcity.virtual.run.CommandLineUtils.additionalComma
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
  */
-public class DockerVM implements VMRunner {
+public class DockerVM extends BaseVM implements VMRunner {
   private final ScriptFile myScriptFile;
 
   public DockerVM(@NotNull final ScriptFile scriptFile) {
@@ -61,10 +63,41 @@ public class DockerVM implements VMRunner {
 
     final File baseDir = ctx.getCheckoutDirectory();
     final File workDir = ctx.getWorkingDirectory();
+    final BuildProgressLogger logger = context.getBuild().getBuildLogger();
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
       @Override
       public void buildWithScriptFile(@NotNull File script) throws RunBuildException {
+
+        builder.addTryProcess(
+                block("Pulling the image",
+                cmd.commandline(
+                workDir,
+                dockerPull()
+        )));
+
+        builder.addTryProcess(
+                block("Executing the command", cmd.commandline(
+                workDir,
+                dockerRun(script)
+        )));
+      }
+
+      @NotNull
+      private List<String> dockerPull() throws RunBuildException {
+        final List<String> arguments = new ArrayList<>();
+
+        arguments.addAll(Arrays.asList(
+                "docker",
+                "pull",
+                ctx.getImageName()
+        ));
+
+        return arguments;
+      }
+
+      @NotNull
+      private List<String> dockerRun(@NotNull final File script) throws RunBuildException {
         final List<String> arguments = new ArrayList<>();
 
         arguments.addAll(Arrays.asList(
@@ -75,7 +108,6 @@ public class DockerVM implements VMRunner {
                 baseDir.getPath() + ":/jonnyzzz:rw",
                 "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
                 "--interactive=false",
-                "--hostname=" + context.getBuild().getAgentConfiguration().getName() + "-docker",
                 "--tty=false"));
 
         arguments.addAll(additionalCommands(context.getRunnerParameters().get(VMConstants.PARAMETER_DOCKER_CUSTOM_COMMANDLINE)));
@@ -86,14 +118,15 @@ public class DockerVM implements VMRunner {
                 "\"source " + script.getName() + "\""
         ));
 
-        builder.addTryProcess(cmd.commandline(
-                workDir,
-                arguments
-        ));
+        return arguments;
+      }
+
+      @NotNull
+      private BuildProcess block(@NotNull final String blockText,
+                                 @NotNull final BuildProcess proc) {
+        return BaseVM.block(logger, "docker", blockText, proc);
       }
     });
-
-      /*docker run --rm=true -v /home/shalupov/work/ui:/work:rw -i -t dockerfile/nodejs bash -c "cd /work && npm install && npm install grunt-cli && ./node_modules/.bin/grunt release"*/
   }
 
 }
