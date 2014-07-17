@@ -135,7 +135,7 @@ public class DockerVM extends BaseVM implements VMRunner {
       private List<String> dockerRun(@NotNull final String name,
                                      @NotNull final List<String> dockerArgs,
                                      @NotNull final List<String> command) throws RunBuildException {
-        final List<String> arguments = new ArrayList<>();
+        final List<String> arguments = new ArrayList<String>();
 
         arguments.addAll(Arrays.asList(
                 "docker",

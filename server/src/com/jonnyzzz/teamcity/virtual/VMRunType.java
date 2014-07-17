@@ -63,7 +63,7 @@ public class VMRunType extends RunType {
     return new PropertiesProcessor() {
       @NotNull
       public Collection<InvalidProperty> process(Map<String, String> properties) {
-        List<InvalidProperty> result = new ArrayList<>();
+        List<InvalidProperty> result = new ArrayList<InvalidProperty>();
         if (StringUtil.isEmptyOrSpaces(properties.get(VMConstants.PARAMETER_SCRIPT))) {
           result.add(new InvalidProperty(VMConstants.PARAMETER_SCRIPT, "Script should not be empty"));
         }
@@ -102,7 +102,7 @@ public class VMRunType extends RunType {
   @NotNull
   @Override
   public List<Requirement> getRunnerSpecificRequirements(@NotNull Map<String, String> runParameters) {
-    final List<Requirement> requirements = new ArrayList<>(super.getRunnerSpecificRequirements(runParameters));
+    final List<Requirement> requirements = new ArrayList<Requirement>(super.getRunnerSpecificRequirements(runParameters));
 
     final String vm = runParameters.get(VMConstants.PARAMETER_VM);
     final VM w = VM.find(vm);

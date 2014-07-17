@@ -32,7 +32,7 @@ public class CommandLineUtils {
   public static List<String> additionalCommands(@Nullable final String text) {
     if (StringUtil.isEmptyOrSpaces(text)) return Collections.emptyList();
 
-    final List<String> result = new ArrayList<>();
+    final List<String> result = new ArrayList<String>();
     for (String s : text.split("[\\r\\n]+")) {
       final String arg = s.trim();
       if (arg.length() == 0) continue;

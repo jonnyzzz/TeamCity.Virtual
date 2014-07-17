@@ -87,7 +87,7 @@ public class VagrantVM extends BaseVM implements VMRunner {
           }
 
           private void up() throws RunBuildException {
-            final List<String> upArguments = new ArrayList<>();
+            final List<String> upArguments = new ArrayList<String>();
             upArguments.addAll(Arrays.asList("vagrant", "up"));
             upArguments.addAll(CommandLineUtils.additionalCommands(context.getRunnerParameters().get(PARAMETER_VAGRANT_CUSTOM_COMMANDLINE)));
 

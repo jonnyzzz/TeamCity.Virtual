@@ -57,7 +57,7 @@ public class CommandlineBuildProcessFactoryImpl implements CommandlineBuildProce
       context.addEnvironmentVariable(entry.getKey(), entry.getValue());
     }
 
-    final List<String> newArgz = new ArrayList<>(argz);
+    final List<String> newArgz = new ArrayList<String>(argz);
     final String commandLine = joinCommandLineArguments(newArgz);
 
     hostContext.getBuild().getBuildLogger().message("Executing command: " + commandLine);

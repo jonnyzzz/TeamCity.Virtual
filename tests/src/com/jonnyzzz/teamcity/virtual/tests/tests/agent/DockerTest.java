@@ -55,7 +55,7 @@ public class DockerTest extends BaseTestCase {
     final BuildProgressLogger logger = m.mock(BuildProgressLogger.class);
     final CommandlineBuildProcessFactory cmd = m.mock(CommandlineBuildProcessFactory.class);
 
-    final Map<String, String> runnerParameters = new TreeMap<>();
+    final Map<String, String> runnerParameters = new TreeMap<String, String>();
     final File home = createTempDir();
     File work = new File(home, "some/work/dir");
 
@@ -82,7 +82,7 @@ public class DockerTest extends BaseTestCase {
                                              @NotNull Collection<String> argz,
                                              @NotNull File workingDir,
                                              @NotNull Map<String, String> additionalEnvironment) throws RunBuildException {
-        final List<String> processed = new ArrayList<>();
+        final List<String> processed = new ArrayList<String>();
         for (String arg : argz) {
           processed.add(
                   arg
@@ -165,7 +165,7 @@ public class DockerTest extends BaseTestCase {
           //noinspection unchecked
           final List<String> processed = (List<String>) item;
 
-          if (processed.equals(new ArrayList<>(Arrays.asList(argz)))) {
+          if (processed.equals(new ArrayList<String>(Arrays.asList(argz)))) {
             return true;
           }
 

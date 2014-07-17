@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Date: 07.07.11 18:41
  */
 public class DelegatingBuildProcess extends BuildProcessBase {
-  private final AtomicReference<BuildProcess> myReference = new AtomicReference<>();
+  private final AtomicReference<BuildProcess> myReference = new AtomicReference<BuildProcess>();
   private final Action myAction;
 
   public DelegatingBuildProcess(@NotNull final Action action) {
