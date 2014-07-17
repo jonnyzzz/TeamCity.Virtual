@@ -40,7 +40,7 @@ public class LoggingTestCase extends BaseTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myLog = new ArrayList<>();
+    myLog = new ArrayList<String>();
   }
 
   protected void assertLog(String... gold) {
