@@ -1,4 +1,4 @@
-Docker/Vargant build runners for TeamCity
+Docker/Vagrant build runners for TeamCity
 
 Features
 ========
