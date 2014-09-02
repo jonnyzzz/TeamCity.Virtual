@@ -74,7 +74,7 @@ public class VMDetector {
         ver = ver.replaceAll(",?\\s+build\\s+", "-");
 
         if (StringUtil.isEmptyOrSpaces(ver)) {
-          LOG.warn("Failed to parse vagrant version: " + output);
+          LOG.warn("Failed to parse docker version: " + output);
           return;
         }
 
