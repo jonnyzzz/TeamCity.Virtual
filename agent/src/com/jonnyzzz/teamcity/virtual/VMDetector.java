@@ -40,11 +40,11 @@ public class VMDetector {
     events.addListener(new AgentLifeCycleAdapter() {
       @Override
       public void beforeAgentConfigurationLoaded(@NotNull BuildAgent agent) {
-        detectVargant(agent.getConfiguration());
+        detectVagrant(agent.getConfiguration());
         detectDocker(agent.getConfiguration());
       }
 
-      private void detectVargant(@NotNull final BuildAgentConfiguration config) {
+      private void detectVagrant(@NotNull final BuildAgentConfiguration config) {
 
         final String output = executeCommandWithShell("vagrant", "vagrant --version");
         if (output == null) return;
