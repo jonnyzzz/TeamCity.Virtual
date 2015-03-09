@@ -54,7 +54,7 @@ public class VMRunnerFactory {
       @NotNull
       @Override
       protected BuildFinishedStatus waitForImpl() throws RunBuildException {
-        context.getBuild().getBuildLogger().message("Staring " + runner.getCaption() + "\u2026");
+        context.getBuild().getBuildLogger().message("Starting " + runner.getCaption() + "\u2026");
 
         if (!context.getBuild().getFailBuildOnExitCode()) {
           context.getBuild().getBuildLogger().warning("The build runner requires to enable 'the build process exit code is not zero' build failure condition");
