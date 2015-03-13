@@ -82,17 +82,17 @@ public class DockerVM extends BaseVM implements VMRunner {
 
         builder.addTryProcess(
                 block("Pulling the image", cmd.commandline(
-                        workDir, Arrays.asList("docker", "pull", ctx.getImageName())
+                        checkoutDir, Arrays.asList("docker", "pull", ctx.getImageName())
                 ))
         );
 
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
-                        workDir,
+                        checkoutDir,
                         dockerRun(name, workDir, additionalCommands, scriptRun(script))
                 ))
         );
-        builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
+        builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(checkoutDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
 
         builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
           @NotNull
@@ -108,7 +108,7 @@ public class DockerVM extends BaseVM implements VMRunner {
               return NOP;
             }
 
-            bp.pushBuildProcess(cmd.commandline(workDir, dockerRun(
+            bp.pushBuildProcess(cmd.commandline(checkoutDir, dockerRun(
                     name + "S",
                     checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
                     Arrays.<String>asList(),
