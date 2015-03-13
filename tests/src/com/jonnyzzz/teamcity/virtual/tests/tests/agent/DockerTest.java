@@ -142,7 +142,7 @@ public class DockerTest extends BaseTestCase {
         oneOf(cmd).executeCommandLine(
                 with(any(BuildRunnerContext.class)),
                 with(argz),
-                with(equal(work)),
+                with(equal(home)),
                 with(any(Map.class))
         );
         will(returnValue(new BuildProcessBase() {
