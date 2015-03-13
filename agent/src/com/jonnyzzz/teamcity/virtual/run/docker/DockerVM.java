@@ -89,7 +89,7 @@ public class DockerVM extends BaseVM implements VMRunner {
         builder.addTryProcess(
                 block("Executing the command", cmd.commandline(
                         workDir,
-                        dockerRun(name, additionalCommands, scriptRun(script))
+                        dockerRun(name, workDir, additionalCommands, scriptRun(script))
                 ))
         );
         builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(workDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
@@ -110,6 +110,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
             bp.pushBuildProcess(cmd.commandline(workDir, dockerRun(
                     name + "S",
+                    baseDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
                     Arrays.<String>asList(),
                     Arrays.asList(
                             "/bin/bash",                           //TODO: bash
@@ -133,6 +134,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
       @NotNull
       private List<String> dockerRun(@NotNull final String name,
+                                     @NotNull final File workDir,
                                      @NotNull final List<String> dockerArgs,
                                      @NotNull final List<String> command) throws RunBuildException {
         final List<String> arguments = new ArrayList<String>();
