@@ -70,7 +70,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                                     @NotNull final TryFinallyBuildProcess builder) throws RunBuildException {
     final DockerContext ctx = new DockerContext(context);
 
-    final File baseDir = ctx.getCheckoutDirectory();
+    final File checkoutDir = ctx.getCheckoutDirectory();
     final File workDir = ctx.getWorkingDirectory();
     final BuildProgressLogger logger = context.getBuild().getBuildLogger();
 
@@ -110,7 +110,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
             bp.pushBuildProcess(cmd.commandline(workDir, dockerRun(
                     name + "S",
-                    baseDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
+                    checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
                     Arrays.<String>asList(),
                     Arrays.asList(
                             "/bin/bash",                           //TODO: bash
@@ -145,8 +145,8 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--rm=true",
                 "--name=" + name,
                 "-v",
-                baseDir.getPath() + ":/jonnyzzz:rw",
-                "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(baseDir, workDir),
+                checkoutDir.getPath() + ":/jonnyzzz:rw",
+                "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
                 "--interactive=false",
                 "--tty=false"));
 
