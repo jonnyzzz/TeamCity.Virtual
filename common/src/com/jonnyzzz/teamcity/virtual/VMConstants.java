@@ -30,6 +30,8 @@ public class VMConstants {
   public static final String VM_DOCKER = "docker";
   public static final String VM_VAGRANT = "vagrant";
   public static final String PARAMETER_SCRIPT = "script";
+  public static final String PARAMETER_CHECKOUT_MOUNT_POINT = "checkout-mount-point";
+
   public static final String PARAMETER_DOCKER_IMAGE_NAME = "docker-image-name";
   public static final String PARAMETER_DOCKER_CUSTOM_COMMANDLINE = "docker-commandline";
 

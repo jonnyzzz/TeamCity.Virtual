@@ -66,4 +66,9 @@ public class VMRunnerContext {
     return myContext.getBuild().getAgentTempDirectory();
   }
 
+  @NotNull
+  public String getCheckoutMountPoint() {
+    String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
+    return StringUtil.isEmptyOrSpaces(mountPoint) ? "/checkout" : mountPoint;
+  }
 }

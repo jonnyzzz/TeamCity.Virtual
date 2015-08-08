@@ -29,6 +29,17 @@
       </props:selectSectionPropertyContent>
     </c:forEach>
   </props:selectSectionProperty>
+
+  <tr>
+    <th>Mount-point for checkout directory:</th>
+    <td>
+      <props:textProperty name="${ctx.checkoutMountPoint}" className="longField"/>
+      <span class="error" id="error:${ctx.checkoutMountPoint}"></span>
+      <span class="smallNote">
+        Path on the Virtual Machine to mount the <em>build checkout directory<bs:help file="Build+Checkout+Directory"/></em>
+      </span>
+    </td>
+  </tr>
 </l:settingsGroup>
 
 <l:settingsGroup title="Commands to Execute">

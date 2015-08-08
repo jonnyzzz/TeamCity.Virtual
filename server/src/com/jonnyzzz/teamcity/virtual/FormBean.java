@@ -40,6 +40,11 @@ public class FormBean {
   }
 
   @NotNull
+  public String getCheckoutMountPoint() {
+    return PARAMETER_CHECKOUT_MOUNT_POINT;
+  }
+
+  @NotNull
   public String getDockerImageName() {
     return PARAMETER_DOCKER_IMAGE_NAME;
   }

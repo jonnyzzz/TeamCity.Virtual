@@ -72,6 +72,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
     final File checkoutDir = ctx.getCheckoutDirectory();
     final File workDir = ctx.getWorkingDirectory();
+    final String mountPoint = ctx.getCheckoutMountPoint();
     final BuildProgressLogger logger = context.getBuild().getBuildLogger();
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
@@ -145,8 +146,8 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--rm=true",
                 "--name=" + name,
                 "-v",
-                checkoutDir.getPath() + ":/jonnyzzz:rw",
-                "--workdir=/jonnyzzz/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
+                checkoutDir.getPath() + ":" + mountPoint + ":rw",
+                "--workdir=" + mountPoint + "/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
                 "--interactive=false",
                 "--tty=false"));
 
