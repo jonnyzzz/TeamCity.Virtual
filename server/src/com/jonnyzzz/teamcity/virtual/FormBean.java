@@ -70,11 +70,6 @@ public class FormBean {
   }
 
   @NotNull
-  public String getVagrantfileFullOverride() {
-    return PARAMETER_VAGRANTFILE_FULL_OVERRIDE;
-  }
-
-  @NotNull
   public String getWorkingDirectory() {
     return AgentRuntimeProperties.BUILD_WORKING_DIR;
   }

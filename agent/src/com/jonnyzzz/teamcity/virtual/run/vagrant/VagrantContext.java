@@ -59,12 +59,6 @@ public class VagrantContext extends VMRunnerContext {
   }
 
   @NotNull
-  public boolean getRequiresCustomFile() {
-    String requiresCustomFile = myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_FULL_OVERRIDE);
-    return requiresCustomFile != null && requiresCustomFile.equals("yes");
-  }
-
-  @NotNull
   public String getCustomVagrantfileContent() {
     return myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_CUSTOM_CONTENT);
   }

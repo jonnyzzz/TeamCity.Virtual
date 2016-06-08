@@ -38,20 +38,11 @@
 </tr>
 
 <tr class="advancedSetting">
-  <th><label for="${ctx.vagrantCustomCommandLine}">Vagrantfile patch:</label></th>
+  <th><label for="${ctx.vagrantCustomCommandLine}">Override Vagrantfile:</label></th>
   <td>
     <props:multilineProperty name="${ctx.vagrantfileCustomContent}" linkTitle="Vagrantfile content" cols="49" rows="3" expanded="${true}"
     value=""/>
-    <span class="smallNote">This is appended to the existing Vagrantfile</span>
+    <span class="smallNote">If you enter text here, the existing Vagrantfile is overridden with this string</span>
     <span id="error_${ctx.vagrantfileCustomContent}" class="error"></span>
-  </td>
-</tr>
-
-<tr class="advancedSetting">
-  <th><label for="${ctx.vagrantCustomCommandLine}">Override Vagrantfile content:</label></th>
-  <td>
-    <props:textProperty name="${ctx.vagrantfileFullOverride}" className="longField" value="no"/>
-    <span class="smallNote">Type in "yes" if you want to override the existing Vagrantfile</span>
-    <span id="error_${ctx.vagrantfileFullOverride}" class="error"></span>
   </td>
 </tr>
