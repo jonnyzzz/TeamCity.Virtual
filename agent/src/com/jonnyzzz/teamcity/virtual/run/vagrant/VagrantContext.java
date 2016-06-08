@@ -40,7 +40,8 @@ public class VagrantContext extends VMRunnerContext {
     File path;
     if (StringUtil.isEmptyOrSpaces(file)) {
       path = new File(myContext.getBuild().getCheckoutDirectory(), VMConstants.VAGRANT_FILE);
-      if (!path.isFile()) throw new RunBuildException(VMConstants.VAGRANT_FILE + " is not found at " + getCheckoutDirectory());
+      if (!path.isFile())
+        throw new RunBuildException(VMConstants.VAGRANT_FILE + " is not found at " + getCheckoutDirectory());
 
     } else {
       path = resolvePath(file);
@@ -55,5 +56,16 @@ public class VagrantContext extends VMRunnerContext {
 
     if (!path.isFile()) throw new RunBuildException("Vagrant file '" + file + "' does not exist");
     return path;
+  }
+
+  @NotNull
+  public boolean getRequiresCustomFile() {
+    String requiresCustomFile = myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_FULL_OVERRIDE);
+    return requiresCustomFile != null && requiresCustomFile.equals("yes");
+  }
+
+  @NotNull
+  public String getCustomVagrantfileContent() {
+    return myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_CUSTOM_CONTENT);
   }
 }

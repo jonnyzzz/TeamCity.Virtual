@@ -31,9 +31,27 @@
 <tr class="advancedSetting">
   <th><label for="${ctx.vagrantCustomCommandLine}">Additional Vagrant Parameters:</label></th>
   <td>
-    <props:multilineProperty name="${ctx.vagrantCustomCommandLine}" linkTitle="Docker Parameters" cols="49" rows="3" expanded="${true}"/>
+    <props:multilineProperty name="${ctx.vagrantCustomCommandLine}" linkTitle="Vagrant Parameters" cols="49" rows="3" expanded="${true}"/>
     <span class="smallNote">Additional commandline parameters to the <em>vagrant up</em> command. Write each parameter on a new line</span>
     <span id="error_${ctx.vagrantCustomCommandLine}" class="error"></span>
   </td>
 </tr>
 
+<tr class="advancedSetting">
+  <th><label for="${ctx.vagrantCustomCommandLine}">Vagrantfile patch:</label></th>
+  <td>
+    <props:multilineProperty name="${ctx.vagrantfileCustomContent}" linkTitle="Vagrantfile content" cols="49" rows="3" expanded="${true}"
+    value=""/>
+    <span class="smallNote">This is appended to the existing Vagrantfile</span>
+    <span id="error_${ctx.vagrantfileCustomContent}" class="error"></span>
+  </td>
+</tr>
+
+<tr class="advancedSetting">
+  <th><label for="${ctx.vagrantCustomCommandLine}">Override Vagrantfile content:</label></th>
+  <td>
+    <props:textProperty name="${ctx.vagrantfileFullOverride}" className="longField" value="no"/>
+    <span class="smallNote">Type in "yes" if you want to override the existing Vagrantfile</span>
+    <span id="error_${ctx.vagrantfileFullOverride}" class="error"></span>
+  </td>
+</tr>

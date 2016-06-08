@@ -37,6 +37,8 @@ public class VMConstants {
 
   public static final String PARAMETER_VAGRANT_FILE = "vagrant-file";
   public static final String PARAMETER_VAGRANT_CUSTOM_COMMANDLINE = "vagrant-commandline";
+  public static final String PARAMETER_VAGRANTFILE_CUSTOM_CONTENT = "vagrantfile-content";
+  public static final String PARAMETER_VAGRANTFILE_FULL_OVERRIDE = "no";
 
   public static final String VAGRANT_FILE = "Vagrantfile";
 }

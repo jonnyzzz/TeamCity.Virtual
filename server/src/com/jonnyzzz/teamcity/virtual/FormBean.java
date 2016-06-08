@@ -65,6 +65,16 @@ public class FormBean {
   }
 
   @NotNull
+  public String getVagrantfileCustomContent() {
+    return PARAMETER_VAGRANTFILE_CUSTOM_CONTENT;
+  }
+
+  @NotNull
+  public String getVagrantfileFullOverride() {
+    return PARAMETER_VAGRANTFILE_FULL_OVERRIDE;
+  }
+
+  @NotNull
   public String getWorkingDirectory() {
     return AgentRuntimeProperties.BUILD_WORKING_DIR;
   }

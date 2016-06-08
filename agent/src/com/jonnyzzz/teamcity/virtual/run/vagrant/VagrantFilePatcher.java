@@ -83,12 +83,17 @@ public class VagrantFilePatcher {
         final File mountRoot = context.getCheckoutDirectory();
         final String basePath = context.getCheckoutMountPoint();
 
-        final String patch = generateVagrantfile(mountRoot, basePath);
-        logger.activityStarted("generate", "Added to the end of the Vagrantfile", "vagrant");
-        logger.message(patch);
+        if (context.getRequiresCustomFile()) {
+          logger.activityStarted("generate", "Override existing Vagrantfile", "vagrant");
+          logger.message(context.getCustomVagrantfileContent());
+          writeVagrantFile(originalVagrantFile, context.getCustomVagrantfileContent());
+        } else {
+          logger.activityStarted("generate", "Added to the end of the Vagrantfile", "vagrant");
+          final String patch = generateVagrantfile(mountRoot, basePath);;
+          logger.message(patch);
+          writeVagrantFile(originalVagrantFile, text + "\n\n" + patch);
+        }
         logger.activityFinished("generate", "vagrant");
-
-        writeVagrantFile(originalVagrantFile, text + "\n\n" + patch);
 
         final String relPath = RelativePaths.resolveRelativePath(mountRoot, context.getWorkingDirectory());
         continuation.execute(basePath + (relPath.length() == 0 ? "" : "/" + relPath));
