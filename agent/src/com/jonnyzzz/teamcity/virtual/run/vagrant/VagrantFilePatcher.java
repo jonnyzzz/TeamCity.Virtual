@@ -44,7 +44,7 @@ public class VagrantFilePatcher {
       @Override
       protected BuildFinishedStatus waitForImpl() throws RunBuildException {
 
-        final String text;
+        String text;
         try {
           text = FileUtil.readText(originalVagrantFile);
         } catch (IOException e) {
@@ -83,12 +83,19 @@ public class VagrantFilePatcher {
         final File mountRoot = context.getCheckoutDirectory();
         final String basePath = context.getCheckoutMountPoint();
 
-        final String patch = generateVagrantfile(mountRoot, basePath);
+        if (context.getCustomVagrantfileContent().length() > 0) {
+          logger.activityStarted("generate", "Override existing Vagrantfile", "vagrant");
+          logger.message(context.getCustomVagrantfileContent());
+          text = context.getCustomVagrantfileContent();
+        }
+
+        String patch = "";
         logger.activityStarted("generate", "Added to the end of the Vagrantfile", "vagrant");
+        patch = patch + "\n\n" + generateVagrantfile(mountRoot, basePath);
         logger.message(patch);
-        logger.activityFinished("generate", "vagrant");
 
         writeVagrantFile(originalVagrantFile, text + "\n\n" + patch);
+        logger.activityFinished("generate", "vagrant");
 
         final String relPath = RelativePaths.resolveRelativePath(mountRoot, context.getWorkingDirectory());
         continuation.execute(basePath + (relPath.length() == 0 ? "" : "/" + relPath));

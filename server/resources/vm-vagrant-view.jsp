@@ -24,3 +24,7 @@
 <div class="parameter">
   Additional Vagrant Parameters: <strong><props:displayValue name="${ctx.vagrantCustomCommandLine}" /></strong>
 </div>
+
+<div class="parameter">
+  Custom Vagrantfile content: <strong><props:displayValue name="${ctx.vagrantfileCustomContent}" /></strong>
+</div>
