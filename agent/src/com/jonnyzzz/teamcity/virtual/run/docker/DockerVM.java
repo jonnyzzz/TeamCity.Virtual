@@ -114,7 +114,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                     checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
                     Arrays.<String>asList(),
                     Arrays.asList(
-                            "/bin/bash",                           //TODO: bash
+                            "/bin/sh",
                             "-c",
                             "chown -R " + uid + ":" + gid + " ."
                     ))));
@@ -127,7 +127,7 @@ public class DockerVM extends BaseVM implements VMRunner {
       @NotNull
       private List<String> scriptRun(@NotNull final File script) {
         return Arrays.asList(
-                "/bin/bash",  ///TODO: imagine OS without bash
+                "/bin/sh",
                 "-c",
                 "\"source " + script.getName() + "\""
         );
