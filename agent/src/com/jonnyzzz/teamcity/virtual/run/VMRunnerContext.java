@@ -74,6 +74,10 @@ public class VMRunnerContext {
 
   @NotNull
   public String getShellLocation() {
-    return myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    if (loc == null) {
+      return "/bin/bash";
+    }
+    return loc;
   }
 }
