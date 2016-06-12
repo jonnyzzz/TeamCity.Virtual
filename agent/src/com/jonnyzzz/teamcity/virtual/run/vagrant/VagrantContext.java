@@ -60,6 +60,14 @@ public class VagrantContext extends VMRunnerContext {
 
   @NotNull
   public String getCustomVagrantfileContent() {
-    return myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_CUSTOM_CONTENT);
+    String r = myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_CUSTOM_CONTENT);
+    if (r == null || isTrue(myContext.getRunnerParameters().get(VMConstants.PARAMETER_VAGRANTFILE_DO_OVERRIDE))) {
+      return "";
+    }
+    return r;
+  }
+
+  private boolean isTrue(String property) {
+    return !Boolean.parseBoolean(property) && !"yes".equalsIgnoreCase(property);
   }
 }

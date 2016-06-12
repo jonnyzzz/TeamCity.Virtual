@@ -14,7 +14,7 @@
   ~ limitations under the License.
   --%>
 
-<%@ include file="/include-internal.jsp"%>
+<%@ include file="/include-internal.jsp" %>
 <jsp:useBean id="ctx" class="com.jonnyzzz.teamcity.virtual.FormBean"/>
 
 <c:set var="note">
@@ -25,7 +25,7 @@
   <props:selectSectionProperty name="${ctx.vm}" title="Virtualization" note="${note}">
     <c:forEach var="it" items="${ctx.vms}">
       <props:selectSectionPropertyContent value="${it.name}" caption="${it.caption}">
-        <jsp:include page="${it.edit}" />
+        <jsp:include page="${it.edit}"/>
       </props:selectSectionPropertyContent>
     </c:forEach>
   </props:selectSectionProperty>
@@ -36,8 +36,19 @@
       <props:textProperty name="${ctx.checkoutMountPoint}" className="longField"/>
       <span class="error" id="error:${ctx.checkoutMountPoint}"></span>
       <span class="smallNote">
-        Path on the Virtual Machine to mount the <em>build checkout directory<bs:help file="Build+Checkout+Directory"/></em>
+        Path on the Virtual Machine to mount the <em>build checkout directory<bs:help
+              file="Build+Checkout+Directory"/></em>
       </span>
+    </td>
+  </tr>
+
+  <tr class="advancedSetting">
+    <th><label for="${ctx.shellSelection}">Select default shell to use</label></th>
+    <td>
+      <props:selectProperty name="${ctx.shellSelection}">
+        <props:option value="/bin/bash">/bin/bash</props:option>
+        <props:option value="/bin/sh">/bin/sh</props:option>
+      </props:selectProperty>
     </td>
   </tr>
 </l:settingsGroup>
@@ -49,7 +60,7 @@
       <span class="smallNote">
         Virtual environment is started with
         the <em>build checkout directory <bs:help file="Build+Checkout+Directory"/></em> mounted for read/write into the virtual environment.
-        <br />
+        <br/>
         The <em>working directory path</em> and the <em>build checkout directory path</em> are automatically mapped into virtual environment paths.
         <br/>
         The virtual environment is destroyed after execution is completed
@@ -59,7 +70,8 @@
   <tr>
     <th>Command:</th>
     <td>
-      <props:multilineProperty name="${ctx.script}" linkTitle="Script to run in the VM" cols="49" rows="8" expanded="${true}"/>
+      <props:multilineProperty name="${ctx.script}" linkTitle="Script to run in the VM" cols="49" rows="8"
+                               expanded="${true}"/>
       <span class="error" id="error:${ctx.script}"></span>
       <span class="smallNote">
         Commands to be executed in the virtual environment in the <em>working directory</em>
@@ -69,10 +81,10 @@
 
   <tr>
     <th>
-      <label for="${ctx.workingDirectory}">Working Directory: <bs:help file="Build+Working+Directory" /></label>
+      <label for="${ctx.workingDirectory}">Working Directory: <bs:help file="Build+Working+Directory"/></label>
     </th>
     <td>
-      <props:textProperty name="${ctx.workingDirectory}"  className="longField"/>
+      <props:textProperty name="${ctx.workingDirectory}" className="longField"/>
       <bs:vcsTree fieldId="${ctx.workingDirectory}" treeId="teamcity-build-workingDir" dirsOnly="true"/>
       <span class="smallNote">
         The <em>relative path</em> to the <em>build checkout directory <bs:help file="Build+Checkout+Directory"/></em>

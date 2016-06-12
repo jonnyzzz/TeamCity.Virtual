@@ -88,7 +88,7 @@ public class DockerVM extends BaseVM implements VMRunner {
         );
 
         builder.addTryProcess(
-                block("Executing the command", cmd.commandline(
+                block("Executing the command using " + ctx.getShellLocation(), cmd.commandline(
                         checkoutDir,
                         dockerRun(name, workDir, additionalCommands, scriptRun(script))
                 ))
@@ -114,7 +114,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                     checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
                     Arrays.<String>asList(),
                     Arrays.asList(
-                            "/bin/bash",                           //TODO: bash
+                            ctx.getShellLocation(),
                             "-c",
                             "chown -R " + uid + ":" + gid + " ."
                     ))));
@@ -127,7 +127,7 @@ public class DockerVM extends BaseVM implements VMRunner {
       @NotNull
       private List<String> scriptRun(@NotNull final File script) {
         return Arrays.asList(
-                "/bin/bash",  ///TODO: imagine OS without bash
+                ctx.getShellLocation(),
                 "-c",
                 "\"source " + script.getName() + "\""
         );

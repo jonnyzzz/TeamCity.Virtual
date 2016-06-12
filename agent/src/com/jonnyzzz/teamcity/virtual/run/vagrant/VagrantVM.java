@@ -101,8 +101,21 @@ public class VagrantVM extends BaseVM implements VMRunner {
             //TODO: not clear how workdir maps into VM path for Vagrant as we use Vagrantfile for that
             //TODO: fix windows case here ( bash => parameters ), slashes
             builder.addTryProcess(
-                    block("Running the script",
-                            cmd.commandline(workDir, Arrays.asList("vagrant", "ssh", "-c", "\"/bin/bash -c 'cd " + relativePath + " && . " + script.getName() + "'\"")))
+                    block("Running the script using " + ctx.getShellLocation(),
+                            cmd.commandline(
+                                    workDir,
+                                    Arrays.asList(
+                                            "vagrant",
+                                            "ssh",
+                                            "-c",
+                                            "\""
+                                                    + ctx.getShellLocation()
+                                                    + " -c 'cd "
+                                                    + relativePath
+                                                    + " && . " + script.getName() + "'\""
+                                    )
+                            ))
+
             );
           }
 
