@@ -50,6 +50,11 @@ public class FormBean {
   }
 
   @NotNull
+  public String getShellSelection() {
+    return PARAMETER_SHELL;
+  }
+
+  @NotNull
   public String getDockerCustomCommandLine() {
     return PARAMETER_DOCKER_CUSTOM_COMMANDLINE;
   }
@@ -67,6 +72,11 @@ public class FormBean {
   @NotNull
   public String getVagrantfileCustomContent() {
     return PARAMETER_VAGRANTFILE_CUSTOM_CONTENT;
+  }
+
+  @NotNull
+  public String getVagrantfileDoOverride() {
+    return PARAMETER_VAGRANTFILE_DO_OVERRIDE;
   }
 
   @NotNull

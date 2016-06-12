@@ -71,4 +71,13 @@ public class VMRunnerContext {
     String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
     return StringUtil.isEmptyOrSpaces(mountPoint) ? "/checkout" : mountPoint;
   }
+
+  @NotNull
+  public String getShellLocation() {
+    String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    if (loc == null) {
+      return "/bin/bash";
+    }
+    return loc;
+  }
 }
