@@ -32,6 +32,7 @@ public class VMConstants {
   public static final String PARAMETER_SCRIPT = "script";
   public static final String PARAMETER_CHECKOUT_MOUNT_POINT = "checkout-mount-point";
   public static final String PARAMETER_SHELL = "default-shell-location";
+  public static final String DOCKER_MOUNT_MODE = "docker-mount-mode";
 
   public static final String PARAMETER_DOCKER_IMAGE_NAME = "docker-image-name";
   public static final String PARAMETER_DOCKER_CUSTOM_COMMANDLINE = "docker-commandline";

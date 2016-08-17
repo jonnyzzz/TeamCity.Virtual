@@ -80,4 +80,13 @@ public class VMRunnerContext {
     }
     return loc;
   }
+
+  @NotNull
+  public String getDockerMountMode() {
+    String mountMode = myContext.getRunnerParameters().get(VMConstants.DOCKER_MOUNT_MODE);
+    if (mountMode == null) {
+      return "rw";
+    }
+    return mountMode;
+  }
 }

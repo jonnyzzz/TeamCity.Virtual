@@ -45,6 +45,11 @@ public class FormBean {
   }
 
   @NotNull
+  public String getMountMode() {
+    return DOCKER_MOUNT_MODE;
+  }
+
+  @NotNull
   public String getDockerImageName() {
     return PARAMETER_DOCKER_IMAGE_NAME;
   }
