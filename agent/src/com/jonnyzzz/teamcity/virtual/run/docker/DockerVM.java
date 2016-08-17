@@ -146,7 +146,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--rm=true",
                 "--name=" + name,
                 "-v",
-                checkoutDir.getPath() + ":" + mountPoint + ":rw",
+                checkoutDir.getPath() + ":" + mountPoint + ":" + ctx.getDockerMountMode(),
                 "--workdir=" + mountPoint + "/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
                 "--interactive=false",
                 "--tty=false"));

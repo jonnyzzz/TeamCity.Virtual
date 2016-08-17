@@ -34,6 +34,18 @@
 </tr>
 
 <tr class="advancedSetting">
+  <th><label for="${ctx.mountMode}">Select mount mode to use:</label></th>
+  <td>
+    <props:selectProperty name="${ctx.mountMode}">
+      <props:option value="rw">read-write (RW)</props:option>
+      <props:option value="ro">read-only (RO)</props:option>
+      <props:option value="z">shared volume label (z)</props:option>
+      <props:option value="Z">private unshared volume label (Z)</props:option>
+    </props:selectProperty>
+  </td>
+</tr>
+
+<tr class="advancedSetting">
   <th><label for="${ctx.dockerCustomCommandLine}">Additional Docker Parameters:</label></th>
   <td>
     <props:multilineProperty name="${ctx.dockerCustomCommandLine}" linkTitle="Docker Parameters" cols="49" rows="3" expanded="${true}"/>
