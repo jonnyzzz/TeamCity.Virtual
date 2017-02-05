@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual.run;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
@@ -68,14 +69,20 @@ public class VMRunnerContext {
 
   @NotNull
   public String getCheckoutMountPoint() {
+    String defaultMountPoint;
+    if(SystemInfo.isUnix) {
+      defaultMountPoint = "/checkout";
+    } else {
+      defaultMountPoint = "C:\\checkout";
+    }
     String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
-    return StringUtil.isEmptyOrSpaces(mountPoint) ? "/checkout" : mountPoint;
+    return StringUtil.isEmptyOrSpaces(mountPoint) ? defaultMountPoint : mountPoint;
   }
 
   @NotNull
   public String getShellLocation() {
     String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
-    if (loc == null) {
+    if (loc.equals("default")) {
       return "/bin/bash";
     }
     return loc;

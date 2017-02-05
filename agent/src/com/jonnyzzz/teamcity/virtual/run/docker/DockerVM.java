@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual.run.docker;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.*;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.jonnyzzz.teamcity.virtual.run.CommandLineUtils.additionalCommands;
@@ -88,12 +90,24 @@ public class DockerVM extends BaseVM implements VMRunner {
         );
 
         builder.addTryProcess(
-                block("Executing the command using " + ctx.getShellLocation(), cmd.commandline(
+                block("Executing the command using " + ctx.getShellLocationInsideContainer(), cmd.commandline(
                         checkoutDir,
                         dockerRun(name, workDir, additionalCommands, scriptRun(script))
                 ))
         );
-        builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(checkoutDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
+
+        List<String> terminatingCommand;
+        if(SystemInfo.isUnix) {
+          terminatingCommand = Arrays.asList("docker", "kill", name, "2>&1", "||", "true");
+        } else {
+          terminatingCommand = Arrays.asList("docker", "kill", name, ">nul", "2>nul", "&", "exit", "0");
+        }
+        builder.addFinishProcess(
+                block(
+                        "Terminating images (if needed)",
+                        cmd.commandline(checkoutDir,  terminatingCommand)
+                )
+        );
 
         builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
           @NotNull
@@ -125,12 +139,14 @@ public class DockerVM extends BaseVM implements VMRunner {
       }
 
       @NotNull
-      private List<String> scriptRun(@NotNull final File script) {
-        return Arrays.asList(
-                ctx.getShellLocation(),
-                "-c",
-                "\"source " + script.getName() + "\""
-        );
+      private List<String> scriptRun(@NotNull final File script) throws RunBuildException {
+        if(ctx.isDockerServerWindowsBased() && ctx.getShellLocationInsideContainer().equals("cmd.exe")) {
+          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "/C", "call " + script.getName());
+        } else if(ctx.isDockerServerWindowsBased() && ctx.getShellLocationInsideContainer().equals("powershell.exe")) {
+          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "-Command", "get-content " + script.getName() + " | Invoke-Expression");
+        } else {
+          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "-c", "source " + script.getName());
+        }
       }
 
       @NotNull
@@ -147,7 +163,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--name=" + name,
                 "-v",
                 checkoutDir.getPath() + ":" + mountPoint + ":" + ctx.getDockerMountMode(),
-                "--workdir=" + mountPoint + "/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
+                "--workdir=" + mountPoint + ctx.getPathSeparatorInsideContainer() + RelativePaths.resolveRelativePath(checkoutDir, workDir),
                 "--interactive=false",
                 "--tty=false"));
 

@@ -46,9 +46,15 @@
     <th><label for="${ctx.shellSelection}">Select default shell to use</label></th>
     <td>
       <props:selectProperty name="${ctx.shellSelection}">
+        <props:option value="default">default</props:option>
+        <props:option value="cmd.exe">cmd.exe</props:option>
+        <props:option value="powershell.exe">powershell.exe</props:option>
         <props:option value="/bin/bash">/bin/bash</props:option>
         <props:option value="/bin/sh">/bin/sh</props:option>
       </props:selectProperty>
+      <span class="smallNote">
+        Defaults are cmd.exe and /bin/bash
+      </span>
     </td>
   </tr>
 </l:settingsGroup>
