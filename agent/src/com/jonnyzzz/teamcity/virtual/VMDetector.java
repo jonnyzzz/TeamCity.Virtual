@@ -29,6 +29,7 @@ import jetbrains.buildServer.util.StringUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Arrays;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
@@ -46,14 +47,14 @@ public class VMDetector {
 
       private void detectVagrant(@NotNull final BuildAgentConfiguration config) {
 
-        final String output = executeCommandWithShell("vagrant", "vagrant --version");
+        final String[] output = executeCommandWithShell("vagrant", "vagrant --version");
         if (output == null) return;
 
-        String ver = output.toLowerCase().trim();
+        String ver = output[0].toLowerCase().trim();
         if (ver.startsWith("vagrant")) ver = ver.substring("vagrant".length()).trim();
 
         if (StringUtil.isEmptyOrSpaces(ver)) {
-          LOG.warn("Failed to parse vagrant version: " + output);
+          LOG.warn("Failed to parse vagrant version: " + Arrays.toString(output));
           return;
         }
 
@@ -61,29 +62,53 @@ public class VMDetector {
       }
 
       private void detectDocker(@NotNull final BuildAgentConfiguration config) {
-        if (!SystemInfo.isLinux) {
-          LOG.debug("Docker is only available under Linux");
-          return;
-        }
 
-        final String output = executeCommandWithShell("docker", "docker --version");
+        final String[] output = executeCommandWithShell("docker", "docker version");
         if (output == null) return;
 
-        String ver = output.toLowerCase().trim();
-        ver = ver.replaceAll("\\s*docker\\s+version\\s+", "");
-        ver = ver.replaceAll(",?\\s+build\\s+", "-");
+        String[] cleanedArray = new String[output.length];
 
-        if (StringUtil.isEmptyOrSpaces(ver)) {
-          LOG.warn("Failed to parse docker version: " + output);
+        for (int i = 0; i < output.length; i++)
+          cleanedArray[i] = output[i].trim();
+
+        int serverPosition = Arrays.asList(cleanedArray).indexOf("Server:");
+        String[] clientProperties = Arrays.copyOfRange(cleanedArray, 0, serverPosition - 1);
+        String[] serverProperties = Arrays.copyOfRange(cleanedArray, serverPosition, cleanedArray.length);
+
+        String clientVersion = getDockerPropertyValue(clientProperties, "Version:");
+        String clientOsArch = getDockerPropertyValue(clientProperties, "OS/Arch:");;
+        String serverVersion = getDockerPropertyValue(serverProperties, "Version:");;
+        String serverOsArch = getDockerPropertyValue(serverProperties, "OS/Arch:");;
+
+        if (StringUtil.isEmptyOrSpaces(clientVersion)
+                || StringUtil.isEmptyOrSpaces(clientOsArch)
+                || StringUtil.isEmptyOrSpaces(serverVersion)
+                || StringUtil.isEmptyOrSpaces(serverOsArch)) {
+          LOG.warn("Failed to parse docker information: " + Arrays.toString(output));
           return;
         }
 
-        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, ver);
+        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, clientVersion);
+        config.addConfigurationParameter(VMConstants.DOCKER_CLIENT_VERSION_PROPERTY, clientVersion);
+        config.addConfigurationParameter(VMConstants.DOCKER_CLIENT_OS_ARCH_PROPERTY, clientOsArch);
+        config.addConfigurationParameter(VMConstants.DOCKER_SERVER_VERSION_PROPERTY, serverVersion);
+        config.addConfigurationParameter(VMConstants.DOCKER_SERVER_OS_ARCH_PROPERTY, serverOsArch);
+
+      }
+
+      @Nullable
+      private String getDockerPropertyValue(String[] dockerProperties, String key) {
+        for (String line : dockerProperties) {
+          if (line.contains(key)) {
+            return line.replace(key, "").trim();
+          }
+        }
+        return null;
       }
 
 
       @Nullable
-      private String executeCommandWithShell(@NotNull final String name, @NotNull final String... command) {
+      private String[] executeCommandWithShell(@NotNull final String name, @NotNull final String... command) {
         GeneralCommandLine cmd = new GeneralCommandLine();
         if (SystemInfo.isWindows) {
           cmd.setExePath("cmd");
@@ -104,7 +129,7 @@ public class VMDetector {
           return null;
         }
 
-        return result.getStdout();
+        return result.getOutLines();
       }
 
     });

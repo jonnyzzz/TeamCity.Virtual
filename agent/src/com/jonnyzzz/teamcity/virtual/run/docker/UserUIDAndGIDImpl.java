@@ -46,7 +46,10 @@ public class UserUIDAndGIDImpl implements UserUIDAndGID {
       public void afterAgentConfigurationLoaded(@NotNull final BuildAgent agent) {
         final BuildAgentConfiguration configuration = agent.getConfiguration();
 
-        if (configuration.getConfigurationParameters().get(VMConstants.DOCKER_PROPERTY) == null) return;
+        if (configuration.getConfigurationParameters().get(VMConstants.DOCKER_CLIENT_VERSION_PROPERTY) == null) return;
+        if (configuration.getConfigurationParameters().get(VMConstants.DOCKER_CLIENT_OS_ARCH_PROPERTY) == null) return;
+        if (configuration.getConfigurationParameters().get(VMConstants.DOCKER_SERVER_OS_ARCH_PROPERTY) == null) return;
+        if (configuration.getConfigurationParameters().get(VMConstants.DOCKER_SERVER_VERSION_PROPERTY) == null) return;
         if (!configuration.getSystemInfo().isUnix()) return;
         if (configuration.getSystemInfo().isWindows()) return;
         if (configuration.getSystemInfo().isMac()) return;
