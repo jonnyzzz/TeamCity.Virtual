@@ -69,19 +69,14 @@ public class VMRunnerContext {
 
   @NotNull
   public String getCheckoutMountPoint() {
-    String defaultMountPoint;
-    if(SystemInfo.isUnix) {
-      defaultMountPoint = "/checkout";
-    } else {
-      defaultMountPoint = "C:\\checkout";
-    }
+    final String defaultMountPoint = SystemInfo.isUnix ? "/checkout" : "C:\\checkout";
     String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
     return StringUtil.isEmptyOrSpaces(mountPoint) ? defaultMountPoint : mountPoint;
   }
 
   @NotNull
   public String getShellLocation() {
-    String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    final String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
     if (loc.equals("default")) {
       return "/bin/bash";
     }
@@ -90,7 +85,7 @@ public class VMRunnerContext {
 
   @NotNull
   public String getDockerMountMode() {
-    String mountMode = myContext.getRunnerParameters().get(VMConstants.DOCKER_MOUNT_MODE);
+    final String mountMode = myContext.getRunnerParameters().get(VMConstants.DOCKER_MOUNT_MODE);
     if (mountMode == null) {
       return "rw";
     }
