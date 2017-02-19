@@ -97,7 +97,7 @@ public class DockerVM extends BaseVM implements VMRunner {
         );
 
         List<String> terminatingCommand;
-        if(SystemInfo.isUnix) {
+        if (SystemInfo.isUnix) {
           terminatingCommand = Arrays.asList("docker", "kill", name, "2>&1", "||", "true");
         } else {
           terminatingCommand = Arrays.asList("docker", "kill", name, ">nul", "2>nul", "&", "exit", "0");
@@ -105,45 +105,44 @@ public class DockerVM extends BaseVM implements VMRunner {
         builder.addFinishProcess(
                 block(
                         "Terminating images (if needed)",
-                        cmd.commandline(checkoutDir,  terminatingCommand)
+                        cmd.commandline(checkoutDir, terminatingCommand)
                 )
         );
+        if (SystemInfo.isLinux) {
+          builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
+            @NotNull
+            @Override
+            public BuildProcess startImpl() throws RunBuildException {
+              final CompositeBuildProcess bp = new CompositeBuildProcessImpl();
 
-        builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
-          @NotNull
-          @Override
-          public BuildProcess startImpl() throws RunBuildException {
-            final CompositeBuildProcess bp = new CompositeBuildProcessImpl();
+              final String uid = mySidAndGid.getUID();
+              final String gid = mySidAndGid.getGID();
 
-            final String uid = mySidAndGid.getUID();
-            final String gid = mySidAndGid.getGID();
+              if (StringUtil.isEmptyOrSpaces(uid) || StringUtil.isEmptyOrSpaces(gid)) {
+                logger.warning("SID and GID of current user were not found. chown is skipped");
+                return NOP;
+              }
 
-            if (StringUtil.isEmptyOrSpaces(uid) || StringUtil.isEmptyOrSpaces(gid)) {
-              logger.warning("SID and GID of current user were not found. chown is skipped");
-              return NOP;
+              bp.pushBuildProcess(cmd.commandline(checkoutDir, dockerRun(
+                      name + "S",
+                      checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
+                      Arrays.<String>asList(),
+                      Arrays.asList(
+                              ctx.getShellLocation(),
+                              "-c",
+                              "chown -R " + uid + ":" + gid + " ."
+                      ))));
+
+              return bp;
             }
-
-            bp.pushBuildProcess(cmd.commandline(checkoutDir, dockerRun(
-                    name + "S",
-                    checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
-                    Arrays.<String>asList(),
-                    Arrays.asList(
-                            ctx.getShellLocation(),
-                            "-c",
-                            "chown -R " + uid + ":" + gid + " ."
-                    ))));
-
-            return bp;
-          }
-        })));
+          })));
+        }
       }
 
       @NotNull
       private List<String> scriptRun(@NotNull final File script) throws RunBuildException {
         if(ctx.isDockerServerWindowsBased() && ctx.getShellLocationInsideContainer().equals("cmd.exe")) {
           return  Arrays.asList(ctx.getShellLocationInsideContainer(), "/C", "call " + script.getName());
-        } else if(ctx.isDockerServerWindowsBased() && ctx.getShellLocationInsideContainer().equals("powershell.exe")) {
-          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "-Command", "get-content " + script.getName() + " | Invoke-Expression");
         } else {
           return  Arrays.asList(ctx.getShellLocationInsideContainer(), "-c", "source " + script.getName());
         }
