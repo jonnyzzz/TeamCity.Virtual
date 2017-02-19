@@ -16,17 +16,12 @@
 
 package com.jonnyzzz.teamcity.virtual.run.docker;
 
-import com.intellij.openapi.util.SystemInfo;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.VMRunnerContext;
-import com.oracle.tools.packager.Log;
 import jetbrains.buildServer.RunBuildException;
 import jetbrains.buildServer.agent.BuildRunnerContext;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
@@ -44,19 +39,14 @@ public class DockerContext extends VMRunnerContext {
   }
 
   public boolean isDockerServerWindowsBased() throws RunBuildException {
-    final String serverArch = myContext.getConfigParameters().get(VMConstants.DOCKER_SERVER_OS_ARCH_PROPERTY);
-    return serverArch.equals("windows/amd64");
+    final String serverArch = myContext.getConfigParameters().get(VMConstants.DOCKER_HOST_OS_PROPERTY);
+    return serverArch.equals("windows");
   }
 
   @NotNull
   public String getShellLocationInsideContainer() throws RunBuildException {
-    String defaultShellLocation;
-    if(isDockerServerWindowsBased()) {
-      defaultShellLocation = "cmd.exe";
-    } else {
-      defaultShellLocation = "/bin/bash";
-    }
-    String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    final String defaultShellLocation = isDockerServerWindowsBased() ? "cmd.exe" : "/bin/bash";
+    final String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
     if (loc.equals("default")) {
       return defaultShellLocation;
     }
@@ -64,10 +54,6 @@ public class DockerContext extends VMRunnerContext {
   }
 
   public String getPathSeparatorInsideContainer() throws RunBuildException {
-    if(isDockerServerWindowsBased()) {
-      return "\\";
-    } else {
-      return "/";
-    }
+    return isDockerServerWindowsBased() ? "\\" : "/";
   }
 }

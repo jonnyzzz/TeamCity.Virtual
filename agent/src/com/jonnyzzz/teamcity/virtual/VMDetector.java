@@ -29,7 +29,6 @@ import jetbrains.buildServer.util.StringUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.Arrays;
 
 /**
  * @author Eugene Petrenko (eugene.petrenko@gmail.com)
@@ -47,14 +46,14 @@ public class VMDetector {
 
       private void detectVagrant(@NotNull final BuildAgentConfiguration config) {
 
-        final String[] output = executeCommandWithShell("vagrant", "vagrant --version");
+        final String output = executeCommandWithShell("vagrant", "vagrant --version");
         if (output == null) return;
 
-        String ver = output[0].toLowerCase().trim();
+        String ver = output.toLowerCase().trim();
         if (ver.startsWith("vagrant")) ver = ver.substring("vagrant".length()).trim();
 
         if (StringUtil.isEmptyOrSpaces(ver)) {
-          LOG.warn("Failed to parse vagrant version: " + Arrays.toString(output));
+          LOG.warn("Failed to parse vagrant version: " + output);
           return;
         }
 
@@ -63,52 +62,32 @@ public class VMDetector {
 
       private void detectDocker(@NotNull final BuildAgentConfiguration config) {
 
-        final String[] output = executeCommandWithShell("docker", "docker version");
+        final String output = executeCommandWithShell("docker", "docker version");
         if (output == null) return;
 
-        String[] cleanedArray = new String[output.length];
+        final String dockerVersion = executeCommandWithShell("docker", "docker version --format {{.Server.Version}}");
+        final String dockerHostOS = executeCommandWithShell("docker", "docker version --format {{.Server.Os}}");
 
-        for (int i = 0; i < output.length; i++)
-          cleanedArray[i] = output[i].trim();
-
-        int serverPosition = Arrays.asList(cleanedArray).indexOf("Server:");
-        String[] clientProperties = Arrays.copyOfRange(cleanedArray, 0, serverPosition - 1);
-        String[] serverProperties = Arrays.copyOfRange(cleanedArray, serverPosition, cleanedArray.length);
-
-        String clientVersion = getDockerPropertyValue(clientProperties, "Version:");
-        String clientOsArch = getDockerPropertyValue(clientProperties, "OS/Arch:");;
-        String serverVersion = getDockerPropertyValue(serverProperties, "Version:");;
-        String serverOsArch = getDockerPropertyValue(serverProperties, "OS/Arch:");;
-
-        if (StringUtil.isEmptyOrSpaces(clientVersion)
-                || StringUtil.isEmptyOrSpaces(clientOsArch)
-                || StringUtil.isEmptyOrSpaces(serverVersion)
-                || StringUtil.isEmptyOrSpaces(serverOsArch)) {
-          LOG.warn("Failed to parse docker information: " + Arrays.toString(output));
+        if (StringUtil.isEmptyOrSpaces(dockerVersion)) {
+          LOG.warn("Failed to parse docker version" + output);
+          return;
+        } else if (StringUtil.isEmptyOrSpaces(dockerHostOS)) {
+          LOG.warn("Failed to parse docker host os" + output);
           return;
         }
 
-        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, clientVersion);
-        config.addConfigurationParameter(VMConstants.DOCKER_CLIENT_VERSION_PROPERTY, clientVersion);
-        config.addConfigurationParameter(VMConstants.DOCKER_CLIENT_OS_ARCH_PROPERTY, clientOsArch);
-        config.addConfigurationParameter(VMConstants.DOCKER_SERVER_VERSION_PROPERTY, serverVersion);
-        config.addConfigurationParameter(VMConstants.DOCKER_SERVER_OS_ARCH_PROPERTY, serverOsArch);
+        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, cleanOutput(dockerVersion));
+        config.addConfigurationParameter(VMConstants.DOCKER_HOST_OS_PROPERTY, cleanOutput(dockerHostOS));
+      }
 
+      private String cleanOutput(String rawOutput) {
+        return rawOutput
+                .trim()
+                .replace(System.getProperty("line.separator"), "");
       }
 
       @Nullable
-      private String getDockerPropertyValue(String[] dockerProperties, String key) {
-        for (String line : dockerProperties) {
-          if (line.contains(key)) {
-            return line.replace(key, "").trim();
-          }
-        }
-        return null;
-      }
-
-
-      @Nullable
-      private String[] executeCommandWithShell(@NotNull final String name, @NotNull final String... command) {
+      private String executeCommandWithShell(@NotNull final String name, @NotNull final String... command) {
         GeneralCommandLine cmd = new GeneralCommandLine();
         if (SystemInfo.isWindows) {
           cmd.setExePath("cmd");
@@ -119,7 +98,7 @@ public class VMDetector {
         }
         cmd.addParameters(command);
 
-        LOG.info("Running: " + cmd.getCommandLineString());
+        LOG.info("Running: "+ cmd.getCommandLineString());
 
         final ExecResult result = SimpleCommandLineProcessRunner.runCommand(cmd, new byte[0]);
 
@@ -129,7 +108,7 @@ public class VMDetector {
           return null;
         }
 
-        return result.getOutLines();
+        return result.getStdout();
       }
 
     });
