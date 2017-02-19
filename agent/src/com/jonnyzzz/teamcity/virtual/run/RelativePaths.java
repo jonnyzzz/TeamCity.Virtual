@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual.run;
 
+import com.intellij.openapi.util.SystemInfo;
 import jetbrains.buildServer.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +27,23 @@ import java.io.File;
  */
 public class RelativePaths {
   @NotNull
-  public static String resolveRelativePath(@NotNull final File baseDir, @NotNull final File path) {
-    String result = FileUtil.getRelativePath(baseDir, path);
+  public static String resolveRelativePath(@NotNull final File baseDir, @NotNull final File path, boolean isWindows, boolean convertToLinux) {
+    String result = isWindows
+            ? FileUtil.getRelativePath(baseDir.getAbsolutePath(), path.getAbsolutePath(), '\\')
+            : FileUtil.getRelativePath(baseDir.getAbsolutePath(), path.getAbsolutePath(), '/');
     if (result == null) return "";
-
-    result = result.replace('\\', '/');
-
-    while (result.endsWith(".") || result.endsWith("/")) result = result.substring(0, result.length() - 1);
+    if(convertToLinux)
+      result = result.replace('\\', '/');
+    if(isWindows) {
+      while (result.endsWith(".") || result.endsWith("\\")) result = result.substring(0, result.length() - 1);
+    } else {
+      while (result.endsWith(".") || result.endsWith("/")) result = result.substring(0, result.length() - 1);
+    }
     return result;
+  }
+
+  @NotNull
+  public static String resolveRelativePath(@NotNull final File baseDir, @NotNull final File path) {
+    return resolveRelativePath(baseDir, path, SystemInfo.isWindows, true);
   }
 }

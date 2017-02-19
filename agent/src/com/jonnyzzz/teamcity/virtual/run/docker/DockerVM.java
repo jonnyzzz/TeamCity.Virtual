@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.jonnyzzz.teamcity.virtual.run.CommandLineUtils.additionalCommands;
@@ -162,7 +161,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--name=" + name,
                 "-v",
                 checkoutDir.getPath() + ":" + mountPoint + ":" + ctx.getDockerMountMode(),
-                "--workdir=" + mountPoint + ctx.getPathSeparatorInsideContainer() + RelativePaths.resolveRelativePath(checkoutDir, workDir),
+                "--workdir=" + mountPoint + ctx.getPathSeparatorInsideContainer() + RelativePaths.resolveRelativePath(checkoutDir, workDir, ctx.isDockerServerWindowsBased(), false),
                 "--interactive=false",
                 "--tty=false"));
 
