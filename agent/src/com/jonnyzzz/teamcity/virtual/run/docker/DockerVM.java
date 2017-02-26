@@ -16,6 +16,7 @@
 
 package com.jonnyzzz.teamcity.virtual.run.docker;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.jonnyzzz.teamcity.virtual.VMConstants;
 import com.jonnyzzz.teamcity.virtual.run.*;
 import com.jonnyzzz.teamcity.virtual.util.util.BuildProcessBase;
@@ -72,7 +73,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
     final File checkoutDir = ctx.getCheckoutDirectory();
     final File workDir = ctx.getWorkingDirectory();
-    final String mountPoint = ctx.getCheckoutMountPoint();
+    final String mountPoint = ctx.getCheckoutMountPointInsideContainer();
     final BuildProgressLogger logger = context.getBuild().getBuildLogger();
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {
@@ -88,49 +89,62 @@ public class DockerVM extends BaseVM implements VMRunner {
         );
 
         builder.addTryProcess(
-                block("Executing the command using " + ctx.getShellLocation(), cmd.commandline(
+                block("Executing the command using " + ctx.getShellLocationInsideContainer(), cmd.commandline(
                         checkoutDir,
                         dockerRun(name, workDir, additionalCommands, scriptRun(script))
                 ))
         );
-        builder.addFinishProcess(block("Terminating images (if needed)", cmd.commandline(checkoutDir, Arrays.asList("docker", "kill", name, "2>&1", "||", "true"))));
 
-        builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
-          @NotNull
-          @Override
-          public BuildProcess startImpl() throws RunBuildException {
-            final CompositeBuildProcess bp = new CompositeBuildProcessImpl();
+        List<String> terminatingCommand;
+        if (SystemInfo.isUnix) {
+          terminatingCommand = Arrays.asList("docker", "kill", name, "2>&1", "||", "true");
+        } else {
+          terminatingCommand = Arrays.asList("docker", "kill", name, ">nul", "2>nul", "&", "exit", "0");
+        }
+        builder.addFinishProcess(
+                block(
+                        "Terminating images (if needed)",
+                        cmd.commandline(checkoutDir, terminatingCommand)
+                )
+        );
+        if (SystemInfo.isLinux) {
+          builder.addFinishProcess(block("Fixing chown", new DelegatingBuildProcess(new DelegatingBuildProcess.ActionAdapter() {
+            @NotNull
+            @Override
+            public BuildProcess startImpl() throws RunBuildException {
+              final CompositeBuildProcess bp = new CompositeBuildProcessImpl();
 
-            final String uid = mySidAndGid.getUID();
-            final String gid = mySidAndGid.getGID();
+              final String uid = mySidAndGid.getUID();
+              final String gid = mySidAndGid.getGID();
 
-            if (StringUtil.isEmptyOrSpaces(uid) || StringUtil.isEmptyOrSpaces(gid)) {
-              logger.warning("SID and GID of current user were not found. chown is skipped");
-              return NOP;
+              if (StringUtil.isEmptyOrSpaces(uid) || StringUtil.isEmptyOrSpaces(gid)) {
+                logger.warning("SID and GID of current user were not found. chown is skipped");
+                return NOP;
+              }
+
+              bp.pushBuildProcess(cmd.commandline(checkoutDir, dockerRun(
+                      name + "S",
+                      checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
+                      Arrays.<String>asList(),
+                      Arrays.asList(
+                              ctx.getShellLocation(),
+                              "-c",
+                              "chown -R " + uid + ":" + gid + " ."
+                      ))));
+
+              return bp;
             }
-
-            bp.pushBuildProcess(cmd.commandline(checkoutDir, dockerRun(
-                    name + "S",
-                    checkoutDir,  /** chown should be called for checkout dir to make sure all file owners are fixed, no matter what workdir is **/
-                    Arrays.<String>asList(),
-                    Arrays.asList(
-                            ctx.getShellLocation(),
-                            "-c",
-                            "chown -R " + uid + ":" + gid + " ."
-                    ))));
-
-            return bp;
-          }
-        })));
+          })));
+        }
       }
 
       @NotNull
-      private List<String> scriptRun(@NotNull final File script) {
-        return Arrays.asList(
-                ctx.getShellLocation(),
-                "-c",
-                "\"source " + script.getName() + "\""
-        );
+      private List<String> scriptRun(@NotNull final File script) throws RunBuildException {
+        if(ctx.isDockerServerWindowsBased() && ctx.getShellLocationInsideContainer().equals("cmd.exe")) {
+          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "/C", "call " + script.getName());
+        } else {
+          return  Arrays.asList(ctx.getShellLocationInsideContainer(), "-c", "source " + script.getName());
+        }
       }
 
       @NotNull
@@ -147,7 +161,7 @@ public class DockerVM extends BaseVM implements VMRunner {
                 "--name=" + name,
                 "-v",
                 checkoutDir.getPath() + ":" + mountPoint + ":" + ctx.getDockerMountMode(),
-                "--workdir=" + mountPoint + "/" + RelativePaths.resolveRelativePath(checkoutDir, workDir),
+                "--workdir=" + mountPoint + ctx.getPathSeparatorInsideContainer() + RelativePaths.resolveRelativePath(checkoutDir, workDir, ctx.isDockerServerWindowsBased(), false),
                 "--interactive=false",
                 "--tty=false"));
 

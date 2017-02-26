@@ -37,4 +37,30 @@ public class DockerContext extends VMRunnerContext {
     if (StringUtil.isEmptyOrSpaces(image)) throw new RunBuildException("Docker image is not specified");
     return image;
   }
+
+  public boolean isDockerServerWindowsBased() throws RunBuildException {
+    final String serverArch = myContext.getConfigParameters().get(VMConstants.DOCKER_HOST_OS_PROPERTY);
+    return serverArch.equals("windows");
+  }
+
+  @NotNull
+  public String getShellLocationInsideContainer() throws RunBuildException {
+    final String defaultShellLocation = isDockerServerWindowsBased() ? "cmd.exe" : "/bin/bash";
+    final String loc = myContext.getRunnerParameters().get(VMConstants.PARAMETER_SHELL);
+    if (loc.equals("default")) {
+      return defaultShellLocation;
+    }
+    return loc;
+  }
+
+  @NotNull
+  public String getCheckoutMountPointInsideContainer() throws RunBuildException {
+    final String defaultMountPoint = isDockerServerWindowsBased() ? "C:\\checkout" : "/checkout";
+    final String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
+    return StringUtil.isEmptyOrSpaces(mountPoint) ? defaultMountPoint : mountPoint;
+  }
+
+  public String getPathSeparatorInsideContainer() throws RunBuildException {
+    return isDockerServerWindowsBased() ? "\\" : "/";
+  }
 }

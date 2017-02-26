@@ -24,7 +24,7 @@ public class VMConstants {
 
   public static final String VAGRANT_PROPERTY = "vagrant";
   public static final String DOCKER_PROPERTY = "docker";
-
+  public static final String DOCKER_HOST_OS_PROPERTY = "docker.host.os";
 
   public static final String PARAMETER_VM = "vm";
   public static final String VM_DOCKER = "docker";

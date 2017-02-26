@@ -61,26 +61,30 @@ public class VMDetector {
       }
 
       private void detectDocker(@NotNull final BuildAgentConfiguration config) {
-        if (!SystemInfo.isLinux) {
-          LOG.debug("Docker is only available under Linux");
-          return;
-        }
 
-        final String output = executeCommandWithShell("docker", "docker --version");
+        final String output = executeCommandWithShell("docker", "docker version");
         if (output == null) return;
 
-        String ver = output.toLowerCase().trim();
-        ver = ver.replaceAll("\\s*docker\\s+version\\s+", "");
-        ver = ver.replaceAll(",?\\s+build\\s+", "-");
+        final String dockerVersion = executeCommandWithShell("docker", "docker version --format {{.Server.Version}}");
+        final String dockerHostOS = executeCommandWithShell("docker", "docker version --format {{.Server.Os}}");
 
-        if (StringUtil.isEmptyOrSpaces(ver)) {
-          LOG.warn("Failed to parse docker version: " + output);
+        if (StringUtil.isEmptyOrSpaces(dockerVersion)) {
+          LOG.warn("Failed to parse docker version" + output);
+          return;
+        } else if (StringUtil.isEmptyOrSpaces(dockerHostOS)) {
+          LOG.warn("Failed to parse docker host os" + output);
           return;
         }
 
-        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, ver);
+        config.addConfigurationParameter(VMConstants.DOCKER_PROPERTY, cleanOutput(dockerVersion));
+        config.addConfigurationParameter(VMConstants.DOCKER_HOST_OS_PROPERTY, cleanOutput(dockerHostOS));
       }
 
+      private String cleanOutput(String rawOutput) {
+        return rawOutput
+                .trim()
+                .replace(System.getProperty("line.separator"), "");
+      }
 
       @Nullable
       private String executeCommandWithShell(@NotNull final String name, @NotNull final String... command) {
@@ -94,7 +98,7 @@ public class VMDetector {
         }
         cmd.addParameters(command);
 
-        LOG.info("Running: " + cmd.getCommandLineString());
+        LOG.info("Running: "+ cmd.getCommandLineString());
 
         final ExecResult result = SimpleCommandLineProcessRunner.runCommand(cmd, new byte[0]);
 
