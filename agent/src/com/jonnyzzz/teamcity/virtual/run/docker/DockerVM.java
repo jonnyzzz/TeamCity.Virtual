@@ -73,7 +73,7 @@ public class DockerVM extends BaseVM implements VMRunner {
 
     final File checkoutDir = ctx.getCheckoutDirectory();
     final File workDir = ctx.getWorkingDirectory();
-    final String mountPoint = ctx.getCheckoutMountPoint();
+    final String mountPoint = ctx.getCheckoutMountPointInsideContainer();
     final BuildProgressLogger logger = context.getBuild().getBuildLogger();
 
     myScriptFile.generateScriptFile(ctx, builder, new ScriptFile.Builder() {

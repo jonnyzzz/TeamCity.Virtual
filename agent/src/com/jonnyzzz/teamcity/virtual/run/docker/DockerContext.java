@@ -53,6 +53,13 @@ public class DockerContext extends VMRunnerContext {
     return loc;
   }
 
+  @NotNull
+  public String getCheckoutMountPointInsideContainer() throws RunBuildException {
+    final String defaultMountPoint = isDockerServerWindowsBased() ? "C:\\checkout" : "/checkout";
+    final String mountPoint = myContext.getRunnerParameters().get(VMConstants.PARAMETER_CHECKOUT_MOUNT_POINT);
+    return StringUtil.isEmptyOrSpaces(mountPoint) ? defaultMountPoint : mountPoint;
+  }
+
   public String getPathSeparatorInsideContainer() throws RunBuildException {
     return isDockerServerWindowsBased() ? "\\" : "/";
   }
