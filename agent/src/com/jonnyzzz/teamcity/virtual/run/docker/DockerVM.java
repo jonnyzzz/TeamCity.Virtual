@@ -129,7 +129,7 @@ public class DockerVM extends BaseVM implements VMRunner {
         return Arrays.asList(
                 ctx.getShellLocation(),
                 "-c",
-                "\"source " + script.getName() + "\""
+                "\". ./" + script.getName() + "\""
         );
       }
 
